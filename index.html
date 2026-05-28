@@ -1,1 +1,1352 @@
-<h1>Coming Soon: Alpha Button</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AlphaButton — Drawing Generator for 3ds Max</title>
+<meta name="description" content="AlphaButton is the ultimate drawing generator for 3ds Max. Convert complex 3D geometry into ISO-compliant 2D blueprints with automated dimensions and Bill of Materials.">
+<meta name="theme-color" content="#0A192F">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+
+<!-- SECURITY: Basic Content Security Policy (allows inline scripts/styles for single-file structure but limits external execution) -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src 'self' data: https:;">
+
+<!-- PERFORMANCE: Optimized Font Loading -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   AlphaButton — Drawing Generator  ·  single-page app
+   Design system ported from full_ref (navy / gold / Montserrat)
+   ============================================================ */
+
+:root {
+  /* full_ref palette */
+  --primary-blue:   #0A192F;
+  --secondary-blue: #112240;
+  --tertiary-blue:  #1c2f4f;
+  --accent-yellow:  #FFD700;
+  --accent-hover:   #e6c200;
+  --text-light:     #FFFFFF;
+  --text-gray:      #CCD6F6;
+  --text-dark:      #1a1a1a;
+  --text-muted:     #555;
+  --bg-light:       #F8F9FA;
+
+  /* neumorphic plugin language */
+  --neu-surface:       #515151;
+  --neu-surface-hover: #595959;
+  --neu-surface-2:     #4a4a4a;
+  --neu-text:          #d8d8d8;
+  --neu-text-dim:      #9a9a9a;
+
+  /* plugin button states */
+  --state-idle:       #E89A3C;  /* orange  */
+  --state-ready:      #4CAF50;  /* green   */
+  --state-processing: #d1d1d1;
+  --state-success:    #8fbc8f;
+  --state-error:      #f07178;
+
+  /* neumorphic shadow stacks (light from top-left) */
+  --neu-out:
+     -2px -2px 4px rgba(255,255,255,0.12),
+     -5px -5px 11px rgba(255,255,255,0.06),
+      3px  3px 6px rgba(0,0,0,0.42),
+      7px  7px 16px rgba(0,0,0,0.26);
+  --neu-out-sm:
+     -1px -1px 3px rgba(255,255,255,0.12),
+     -3px -3px 7px rgba(255,255,255,0.05),
+      2px  2px 5px rgba(0,0,0,0.45),
+      4px  4px 10px rgba(0,0,0,0.25);
+  --neu-in:
+     inset  2px  2px 4px rgba(0,0,0,0.58),
+     inset  4px  4px 9px rgba(0,0,0,0.30),
+     inset -2px -2px 4px rgba(255,255,255,0.10),
+     inset -4px -4px 9px rgba(255,255,255,0.05);
+
+  --maxw: 1200px;
+  --header-h: 88px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  background-color: var(--bg-light);
+  color: var(--text-dark);
+  display: flex; flex-direction: column; min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+a { text-decoration: none; transition: .3s; color: inherit; }
+img { max-width: 100%; display: block; }
+::selection { background: var(--accent-yellow); color: var(--primary-blue); }
+
+/* accessibility */
+*:focus { outline: none; }
+*:focus-visible { outline: 3px solid var(--accent-yellow); outline-offset: 2px; border-radius: 4px; }
+.skip-link { position: absolute; top: -48px; left: 8px; background: var(--accent-yellow); color: var(--primary-blue); padding: 9px 16px; z-index: 10000; font-weight: 700; border-radius: 4px; transition: top .2s; }
+.skip-link:focus { top: 8px; }
+
+/* ============================================================
+   NEUMORPHIC BUTTONS
+   ============================================================ */
+.btn {
+  --btn-color: var(--neu-text);
+  position: relative;
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 55px;
+  padding: 16px clamp(22px, 8%, 40px);
+  margin: 4px;
+  border: none; cursor: pointer;
+  background: var(--neu-surface);
+  color: var(--btn-color);
+  font-family: inherit; font-weight: 700; font-size: 14px;
+  letter-spacing: .4px; text-align: center; line-height: 1.1;
+  border-radius: 12px;
+  box-shadow: var(--neu-out);
+  transition: box-shadow .18s ease, background .2s ease, color .2s ease, transform .05s ease;
+  white-space: nowrap; text-transform: uppercase;
+}
+.btn svg { width: 18px; height: 18px; flex: none; }
+.btn:hover { background: var(--neu-surface-hover); }
+.btn:active,
+.btn.is-pressed {
+  background: var(--neu-surface-2);
+  box-shadow: var(--neu-in);
+}
+.btn:active .btn__label,
+.btn.is-pressed .btn__label { transform: translate(1px, 1px); }
+.btn__label { display: inline-flex; align-items: center; gap: 10px; transition: transform .05s ease; }
+.btn:focus-visible { outline: 2px solid var(--btn-color); outline-offset: 3px; border-radius: 12px; }
+
+.btn-primary { --btn-color: var(--state-ready); }
+.btn-primary:hover { --btn-color: #65d169; }
+.btn-idle    { --btn-color: var(--state-idle); }
+.btn-gold    { --btn-color: var(--accent-yellow); }
+.btn-light   { --btn-color: var(--neu-text); }
+.btn-block   { width: 100%; margin-inline: 0; }
+.btn-lg      { min-height: 60px; font-size: 15px; padding: 18px clamp(26px, 8%, 46px); }
+
+/* ============================================================
+   FLOATING HEADER (DARK BY DEFAULT FOR LIGHT BACKGROUNDS)
+   ============================================================ */
+.site-header {
+  position: fixed; inset: 0 0 auto 0; z-index: 1000;
+  padding: 14px clamp(12px, 2.5vw, 30px);
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+.header-bar {
+  pointer-events: auto;
+  max-width: 1320px; margin: 0 auto;
+  min-height: 60px;
+  /* Темний хедер (базовий) - збільшено непрозорість та додано широку тінь для відтінювання */
+  background: rgba(10, 25, 47, 0.97);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3), 0 2px 10px rgba(0, 0, 0, 0.1);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 20px;
+  padding: 9px 12px 9px 22px;
+  position: relative;
+  transition: background 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+}
+
+/* brand */
+.brand { display: flex; align-items: center; gap: 11px; color: #fff; transition: color 0.3s ease; }
+.brand .mark { height: 34px; display: flex; align-items: center; } 
+.brand .mark img { max-height: 100%; width: auto; object-fit: contain; filter: brightness(0) invert(1); opacity: 0.9; transition: filter 0.4s ease, opacity 0.4s ease; } 
+.brand .word { font-weight: 800; font-size: 18px; letter-spacing: .04em; display: none; } 
+.brand .word .dot { color: var(--state-ready); }
+
+/* nav */
+.nav { display: flex; align-items: center; gap: 6px; }
+.nav-item { position: relative; }
+.nav-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px;
+  color: var(--text-gray); padding: 12px 16px; border-radius: 9px; cursor: pointer;
+  background: none; border: none; font-family: inherit;
+  transition: color 0.3s ease;
+}
+.nav-link:hover, .nav-link.active-link { color: var(--accent-yellow); }
+.nav-link .caret { width: 9px; height: 9px; transition: transform .25s; }
+.nav-item:hover .nav-link .caret, .nav-item:focus-within .nav-link .caret { transform: rotate(180deg); }
+
+/* dropdown */
+.dropdown {
+  position: absolute; top: calc(100% + 10px); left: 0;
+  min-width: 230px; background: var(--neu-surface);
+  border-radius: 12px; box-shadow: var(--neu-out); border: none;
+  padding: 8px; opacity: 0; visibility: hidden; transform: translateY(10px);
+  transition: all .28s cubic-bezier(.4,0,.2,1);
+}
+.nav-item:hover .dropdown, .nav-item:focus-within .dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
+.dropdown button {
+  display: block; width: 100%; text-align: left;
+  padding: 11px 16px; border-radius: 8px; border: none; background: none; cursor: pointer;
+  color: var(--neu-text); font-family: inherit; font-size: 13.5px; font-weight: 600;
+}
+.dropdown button:hover, .dropdown button:focus { background: rgba(0,0,0,0.22); color: var(--accent-yellow); }
+
+.header-actions { display: flex; align-items: center; gap: 8px; }
+.icon-btn {
+  width: 40px; height: 40px; border-radius: 10px; background: var(--neu-surface);
+  box-shadow: var(--neu-out-sm); border: none; cursor: pointer;
+  display: grid; place-items: center; color: var(--neu-text); flex: none;
+  transition: all 0.3s ease;
+}
+.icon-btn:active { box-shadow: var(--neu-in); }
+.icon-btn svg { width: 19px; height: 19px; }
+.header-actions .btn { min-height: 44px; padding: 12px 22px; margin: 0; font-size: 13px; }
+.nav > .btn { display: none; }
+
+/* hamburger */
+.menu-toggle { display: none; width: 44px; height: 44px; border-radius: 10px; background: var(--neu-surface); box-shadow: var(--neu-out-sm); border: none; cursor: pointer; flex-direction: column; gap: 5px; align-items: center; justify-content: center; transition: all 0.3s ease; }
+.menu-toggle span { display: block; width: 22px; height: 2.5px; background: #fff; border-radius: 2px; transition: .3s; }
+.menu-toggle.active span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); background: var(--accent-yellow); }
+.menu-toggle.active span:nth-child(2) { opacity: 0; }
+.menu-toggle.active span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); background: var(--accent-yellow); }
+
+/* --- LIGHT HEADER STATE (Triggered when scrolled over dark backgrounds) --- */
+.site-header.is-light .header-bar {
+  /* Світлий хедер - збільшено непрозорість та додано тінь, щоб не зливався з текстом */
+  background: rgba(252, 252, 252, 0.98);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12), 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+.site-header.is-light .brand { color: var(--primary-blue); }
+.site-header.is-light .brand .mark img { filter: none; opacity: 1; }
+.site-header.is-light .nav-link { color: var(--text-muted); }
+.site-header.is-light .nav-link:hover, .site-header.is-light .nav-link.active-link { color: var(--primary-blue); }
+.site-header.is-light .dropdown { background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.05); }
+.site-header.is-light .dropdown button { color: var(--text-dark); }
+.site-header.is-light .dropdown button:hover, .site-header.is-light .dropdown button:focus { background: rgba(0,0,0,0.04); color: var(--primary-blue); }
+.site-header.is-light .menu-toggle { background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05); color: var(--primary-blue); }
+.site-header.is-light .menu-toggle span { background: var(--primary-blue); }
+.site-header.is-light .menu-toggle.active span:nth-child(1), .site-header.is-light .menu-toggle.active span:nth-child(3) { background: var(--accent-hover); }
+
+/* ============================================================
+   SPA SECTIONS
+   ============================================================ */
+main { flex-grow: 1; width: 100%; }
+.page-section { display: none; animation: fadeIn .55s cubic-bezier(.16,1,.3,1); }
+.page-section.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+
+.container { max-width: var(--maxw); margin: 0 auto; padding: 0 5%; }
+.section-pad { padding: 90px 0; }
+.section-pad-sm { padding: 60px 0; }
+.theme-light { background: var(--bg-light); }
+.theme-white { background: #fff; }
+.theme-navy  { background: var(--primary-blue); color: var(--text-light); }
+
+/* page header band */
+.page-header { background: var(--primary-blue); color: #fff; padding: calc(var(--header-h) + 56px) 5% 70px; text-align: center; }
+.page-header h1 { color: var(--accent-yellow); font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 14px; }
+.page-header p { font-size: 1.15rem; color: var(--text-gray); max-width: 620px; margin: 0 auto; line-height: 1.6; }
+
+/* badge */
+.badge {
+  display: inline-block; padding: 6px 16px; margin-bottom: 20px; white-space: nowrap;
+  background: rgba(255,215,0,.1); color: var(--accent-yellow);
+  border: 1px solid rgba(255,215,0,.3); border-radius: 3px;
+  font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;
+}
+.badge--dark { background: rgba(10,25,47,.05); color: var(--primary-blue); border-color: rgba(10,25,47,.12); }
+
+/* section heading */
+.sec-head { max-width: 760px; margin-bottom: 50px; }
+.sec-head--center { margin-inline: auto; text-align: center; }
+.sec-head h2 { color: var(--primary-blue); font-size: clamp(1.9rem, 4vw, 2.6rem); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; line-height: 1.15; margin-bottom: 18px; }
+.theme-navy .sec-head h2 { color: #fff; }
+.sec-head p { font-size: 1.12rem; line-height: 1.7; color: var(--text-muted); }
+.theme-navy .sec-head p { color: var(--text-gray); }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+  position: relative; min-height: 100vh; display: flex; align-items: center;
+  padding: calc(var(--header-h) + 40px) 5% 70px;
+  background:
+    linear-gradient(115deg, rgba(10,25,47,.97) 0%, rgba(10,25,47,.82) 46%, rgba(10,25,47,.45) 100%),
+    var(--primary-blue);
+  color: #fff; overflow: hidden;
+}
+.hero__grid { width: 100%; max-width: var(--maxw); margin: 0 auto; display: grid; grid-template-columns: 1.05fr 1fr; gap: clamp(32px,5vw,64px); align-items: center; }
+.hero__copy { max-width: 620px; }
+.hero h1 { font-size: clamp(2.4rem, 5.4vw, 4rem); font-weight: 800; line-height: 1.04; letter-spacing: .5px; text-transform: uppercase; margin-bottom: 22px; }
+.hero h1 .accent { color: var(--accent-yellow); }
+.hero__lead { font-size: clamp(1rem, 1.6vw, 1.18rem); line-height: 1.75; color: var(--text-gray); margin-bottom: 36px; max-width: 33ch; }
+.hero__cta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.hero__meta { margin-top: 30px; display: flex; gap: 22px; flex-wrap: wrap; font-size: 12.5px; color: var(--text-gray); font-weight: 600; letter-spacing: .3px; }
+.hero__meta span { display: inline-flex; align-items: center; gap: 8px; }
+.hero__meta span::before { content: ""; width: 7px; height: 7px; background: var(--accent-yellow); border-radius: 50%; }
+
+/* window frame for screenshots */
+.frame { border-radius: 12px; background: var(--neu-surface); box-shadow: var(--neu-out); overflow: hidden; }
+.frame--light { background: #fff; box-shadow: 0 30px 70px -25px rgba(0,0,0,.6); }
+.frame__bar { height: 40px; display: flex; align-items: center; gap: 14px; padding: 0 14px; background: var(--neu-surface-2); }
+.frame--light .frame__bar { background: #ececec; }
+.frame__dots { display: flex; gap: 7px; }
+.frame__dots i { width: 11px; height: 11px; border-radius: 50%; background: rgba(255,255,255,.2); }
+.frame--light .frame__dots i { background: rgba(0,0,0,.16); }
+.frame__title { font-size: 12px; color: var(--neu-text-dim); letter-spacing: .03em; font-weight: 600; flex: 1; }
+.frame--light .frame__title { color: #888; }
+.frame__body { display: block; }
+
+.hero-split__pair { display: grid; grid-template-columns: 1fr 1fr; }
+.hero-pane { padding: 16px; display: flex; flex-direction: column; }
+.hero-pane--dark { background: #333330; }
+.hero-pane--light { background: #f4f2ea; }
+.hero-pane img { width: 100%; height: auto; margin: auto; border-radius: 3px; }
+.hero-split__cap { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; color: var(--neu-text-dim); margin-bottom: 10px; display: flex; justify-content: space-between; }
+.hero-pane--light .hero-split__cap { color: #999; }
+.hero-split { position: relative; }
+.hero-split__convert { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); z-index: 3; width: 52px; height: 52px; border-radius: 50%; background: var(--state-ready); color: #fff; display: grid; place-items: center; box-shadow: 0 10px 26px -6px rgba(76,175,80,.7), 0 0 0 7px rgba(76,175,80,.16); }
+.hero-split__convert svg { width: 24px; height: 24px; }
+
+/* Виправлено анімацію Scroll (зроблено повільніше і плавніше) */
+.scroll-cue { position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%); color: var(--accent-yellow); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; animation: bounceDown 2.5s ease-in-out infinite; opacity: .85; }
+.scroll-cue svg { width: 20px; height: 20px; }
+@keyframes bounceDown { 
+  0%, 100% { transform: translateX(-50%) translateY(0); } 
+  50% { transform: translateX(-50%) translateY(10px); } 
+}
+
+/* ============================================================
+   CARDS / GRID
+   ============================================================ */
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 28px; }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.card {
+  background: #fff; padding: 38px 32px; border-radius: 6px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.05); border-top: 4px solid var(--primary-blue);
+  transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.card:hover { transform: translateY(-8px); box-shadow: 0 22px 44px rgba(0,0,0,.1); border-color: var(--accent-yellow); }
+.card .num { font-size: 12px; font-weight: 800; letter-spacing: .12em; color: var(--accent-hover); }
+.card .ico { width: 50px; height: 50px; border-radius: 8px; display: grid; place-items: center; background: var(--primary-blue); color: var(--accent-yellow); }
+.card .ico svg { width: 26px; height: 26px; }
+.card h3 { color: var(--primary-blue); font-size: 1.35rem; font-weight: 700; line-height: 1.3; }
+.card p { color: var(--text-muted); line-height: 1.7; font-size: 15px; }
+
+/* checklist */
+.check-list { list-style: none; display: grid; gap: 13px; margin-top: 8px; }
+.check-list li { display: flex; gap: 12px; align-items: flex-start; font-size: 15.5px; line-height: 1.5; }
+.check-list .ck { flex: none; width: 22px; height: 22px; border-radius: 50%; background: rgba(76,175,80,.14); color: var(--state-ready); display: grid; place-items: center; margin-top: 1px; }
+.check-list .ck svg { width: 13px; height: 13px; }
+.theme-navy .check-list li { color: var(--text-gray); }
+
+/* ============================================================
+   WORKFLOW ROWS
+   ============================================================ */
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(34px,6vw,76px); align-items: center; }
+.row + .row { margin-top: clamp(56px,8vw,110px); }
+.row--flip .row__media { order: -1; }
+.row__kicker { font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--accent-hover); margin-bottom: 14px; }
+.theme-navy .row__kicker { color: var(--accent-yellow); }
+.row h3 { color: var(--primary-blue); font-size: clamp(1.6rem,3vw,2.3rem); font-weight: 800; line-height: 1.15; margin-bottom: 16px; }
+.theme-navy .row h3 { color: #fff; }
+.row p { color: var(--text-muted); font-size: 1.05rem; line-height: 1.7; }
+.theme-navy .row p { color: var(--text-gray); }
+.row .check-list { margin-top: 22px; }
+
+/* ============================================================
+   COMPATIBILITY STRIP
+   ============================================================ */
+.compat { display: flex; align-items: center; justify-content: center; gap: clamp(18px,4vw,50px); flex-wrap: wrap; }
+.compat__label { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-gray); font-weight: 700; }
+.compat__items { display: flex; gap: 12px; flex-wrap: wrap; }
+.compat__chip { font-size: 14px; font-weight: 700; color: #fff; background: var(--secondary-blue); border: 1px solid rgba(255,255,255,.08); border-radius: 6px; padding: 8px 15px; }
+
+/* ============================================================
+   PRICING
+   ============================================================ */
+.price-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 26px; align-items: stretch; }
+.price-card { background: #fff; border-radius: 8px; box-shadow: 0 12px 34px rgba(0,0,0,.06); padding: 36px 30px; display: flex; flex-direction: column; position: relative; border-top: 4px solid var(--primary-blue); }
+.price-card--featured { border-top-color: var(--accent-yellow); box-shadow: 0 20px 50px rgba(10,25,47,.18); transform: translateY(-6px); }
+.price-card__tag { position: absolute; top: -13px; left: 30px; background: var(--accent-yellow); color: var(--primary-blue); font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; padding: 5px 13px; border-radius: 4px; }
+.price-card__name { font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--accent-hover); margin-bottom: 16px; }
+.price-card__price { display: flex; align-items: baseline; gap: 6px; margin-bottom: 6px; }
+.price-card__price .amt { font-size: 3.1rem; font-weight: 800; letter-spacing: -.02em; color: var(--primary-blue); line-height: 1; }
+.price-card__price .per { font-size: 13px; color: var(--text-muted); font-weight: 600; }
+.price-card__sub { font-size: 14px; color: var(--text-muted); margin-bottom: 26px; min-height: 20px; }
+.price-card ul { list-style: none; display: grid; gap: 13px; margin-bottom: 30px; }
+.price-card li { display: flex; gap: 11px; align-items: flex-start; font-size: 15px; color: var(--text-dark); }
+.price-card li .ck { flex: none; width: 20px; height: 20px; border-radius: 50%; background: rgba(76,175,80,.14); color: var(--state-ready); display: grid; place-items: center; margin-top: 1px; }
+.price-card li .ck svg { width: 12px; height: 12px; }
+.price-card li.no .ck { background: rgba(0,0,0,.05); color: #bbb; }
+.price-card li.no { color: #999; }
+.price-card .btn { margin-top: auto; }
+
+/* trust row */
+.trust { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; margin-top: 36px; }
+.trust__item { display: flex; gap: 16px; align-items: flex-start; background: var(--secondary-blue); border: 1px solid rgba(255,255,255,.06); border-radius: 8px; padding: 24px; }
+.trust__item .ico { flex: none; width: 46px; height: 46px; border-radius: 8px; background: rgba(255,215,0,.12); color: var(--accent-yellow); display: grid; place-items: center; }
+.trust__item .ico svg { width: 24px; height: 24px; }
+.trust__item h4 { color: #fff; font-size: 1.02rem; margin-bottom: 5px; }
+.trust__item p { color: var(--text-gray); font-size: 13.5px; line-height: 1.5; }
+
+/* ============================================================
+   FAQ
+   ============================================================ */
+.faq { max-width: 820px; margin: 0 auto; }
+.faq details { border-bottom: 1px solid rgba(10,25,47,.1); }
+.theme-navy .faq details { border-bottom-color: rgba(255,255,255,.1); }
+.faq summary { cursor: pointer; list-style: none; padding: 22px 0; font-size: 1.1rem; font-weight: 700; color: var(--primary-blue); display: flex; justify-content: space-between; gap: 18px; align-items: center; }
+.theme-navy .faq summary { color: #fff; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary .pm { flex: none; width: 22px; height: 22px; position: relative; color: var(--accent-hover); transition: transform .3s; }
+.theme-navy .faq summary .pm { color: var(--accent-yellow); }
+.faq summary .pm::before, .faq summary .pm::after { content: ""; position: absolute; background: currentColor; }
+.faq summary .pm::before { top: 10px; left: 3px; right: 3px; height: 2px; }
+.faq summary .pm::after { left: 10px; top: 3px; bottom: 3px; width: 2px; transition: transform .3s; }
+.faq details[open] summary .pm::after { transform: scaleY(0); }
+.faq details[open] summary .pm { transform: rotate(90deg); }
+.faq .faq-a { padding: 0 0 24px; color: var(--text-muted); line-height: 1.75; max-width: 66ch; }
+.theme-navy .faq .faq-a { color: var(--text-gray); }
+.faq .faq-a a { color: var(--accent-hover); text-decoration: underline; text-underline-offset: 2px; }
+
+/* ============================================================
+   CONTACT
+   ============================================================ */
+.contact { display: grid; grid-template-columns: 1fr 1.2fr; gap: clamp(28px,5vw,56px); align-items: start; }
+.contact__direct { display: grid; gap: 22px; }
+.contact__direct .line { display: flex; gap: 14px; align-items: flex-start; }
+.contact__direct .ico { flex: none; width: 46px; height: 46px; border-radius: 8px; background: rgba(255,215,0,.12); color: var(--accent-yellow); display: grid; place-items: center; }
+.contact__direct .ico svg { width: 22px; height: 22px; }
+.contact__direct h4 { color: #fff; font-size: 1.05rem; margin-bottom: 4px; }
+.contact__direct p, .contact__direct a { color: var(--text-gray); font-size: 15px; }
+.contact__direct a:hover { color: var(--accent-yellow); }
+.contact__box { background: #fff; border-radius: 8px; padding: 36px; box-shadow: 0 12px 34px rgba(0,0,0,.18); }
+.field { display: grid; gap: 8px; margin-bottom: 20px; }
+.field label { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--primary-blue); }
+.field input, .field textarea, .field select { width: 100%; padding: 13px 15px; border: 1px solid #e0e0e0; border-radius: 6px; font-family: inherit; font-size: 15px; background: #fcfcfc; color: var(--text-dark); transition: border-color .25s; }
+.field textarea { min-height: 120px; resize: vertical; }
+.field input:focus, .field textarea:focus, .field select:focus { outline: none; border-color: var(--primary-blue); background: #fff; }
+
+/* ============================================================
+   PROSE / LEGAL
+   ============================================================ */
+.prose-wrap { display: grid; grid-template-columns: 230px 1fr; gap: clamp(34px,6vw,70px); align-items: start; }
+.toc { position: sticky; top: calc(var(--header-h) + 14px); }
+.toc h4 { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #999; margin-bottom: 14px; font-weight: 700; }
+.toc ul { list-style: none; display: grid; gap: 9px; }
+.toc a { display: block; color: var(--text-muted); border-left: 2px solid #e2e2e2; padding-left: 14px; font-size: 14px; cursor: pointer; }
+.toc a:hover { color: var(--primary-blue); border-color: var(--accent-yellow); }
+.prose { max-width: 70ch; }
+.prose .updated { font-size: 12.5px; color: #999; letter-spacing: .03em; margin-bottom: 8px; }
+.prose h2 { color: var(--primary-blue); font-size: 1.45rem; margin: 40px 0 13px; }
+.prose h2:first-of-type { margin-top: 0; }
+.prose p { color: var(--text-muted); line-height: 1.75; margin-bottom: 15px; }
+.prose ul { color: var(--text-muted); line-height: 1.75; margin: 0 0 15px; padding-left: 22px; }
+.prose li { margin-bottom: 8px; }
+.prose a { color: var(--accent-hover); text-decoration: underline; text-underline-offset: 2px; }
+.prose strong { color: var(--primary-blue); }
+.callout { border: 1px solid var(--accent-yellow); background: rgba(255,215,0,.1); border-radius: 8px; padding: 22px 24px; margin: 22px 0; color: var(--text-dark); }
+.callout b { color: var(--accent-hover); }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px 5% 30px; border-top: 5px solid var(--accent-yellow); }
+.footer-grid { max-width: var(--maxw); margin: 0 auto; display: grid; grid-template-columns: 1.6fr 1fr 1fr 1.4fr; gap: 40px; }
+.footer-brand .brand { margin-bottom: 18px; }
+.footer-brand p { max-width: 34ch; line-height: 1.65; font-size: 14.5px; }
+.footer-col h4 { color: #fff; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 18px; font-weight: 700; }
+.footer-col ul { list-style: none; display: grid; gap: 11px; }
+.footer-col a { font-size: 14px; cursor: pointer; }
+.footer-col a:hover { color: var(--accent-yellow); padding-left: 4px; }
+.footer-legal-co { line-height: 1.7; font-size: 14px; }
+.footer-legal-co strong { color: #fff; }
+.footer-legal-co a { color: var(--accent-yellow); }
+.footer-bottom { max-width: var(--maxw); margin: 48px auto 0; padding-top: 26px; border-top: 1px solid rgba(255,255,255,.06); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 12.5px; color: rgba(204,214,246,.6); }
+
+/* ============================================================
+   COOKIE BANNER + SCROLL TOP + TOASTS
+   ============================================================ */
+.cookie { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%) translateY(160%); z-index: 1200; width: min(740px, calc(100% - 28px)); background: var(--neu-surface); border-radius: 14px; box-shadow: var(--neu-out); padding: 20px 22px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; transition: transform .5s cubic-bezier(.16,1,.3,1); }
+.cookie.show { transform: translateX(-50%) translateY(0); }
+.cookie__txt { flex: 1; min-width: 240px; font-size: 14px; color: var(--neu-text); line-height: 1.55; }
+.cookie__txt b { color: #fff; }
+.cookie__txt a { color: var(--accent-yellow); cursor: pointer; }
+.cookie__actions { display: flex; gap: 6px; }
+.cookie .btn { min-height: 44px; padding: 11px 20px; font-size: 12.5px; margin: 0; }
+
+.scroll-top { position: fixed; bottom: 26px; right: 26px; z-index: 999; width: 50px; height: 50px; border-radius: 12px; background: var(--neu-surface); color: var(--accent-yellow); border: none; cursor: pointer; box-shadow: var(--neu-out-sm); display: grid; place-items: center; opacity: 0; visibility: hidden; transform: translateY(16px); transition: all .3s ease; }
+.scroll-top.visible { opacity: 1; visibility: visible; transform: none; }
+.scroll-top:active { box-shadow: var(--neu-in); }
+.scroll-top svg { width: 22px; height: 22px; }
+
+.toast-container { position: fixed; top: 22px; right: 22px; z-index: 9999; display: flex; flex-direction: column; gap: 12px; max-width: calc(100vw - 44px); pointer-events: none; }
+.toast { background: #fff; color: var(--text-dark); padding: 15px 18px; border-radius: 8px; box-shadow: 0 12px 40px rgba(0,0,0,.18); display: flex; gap: 12px; align-items: flex-start; min-width: 290px; max-width: 400px; border-left: 4px solid var(--state-ready); animation: toastIn .4s cubic-bezier(.16,1,.3,1); pointer-events: auto; }
+.toast.removing { animation: toastOut .3s ease forwards; }
+.toast-ico { flex: none; width: 22px; height: 22px; color: var(--state-ready); }
+.toast b { display: block; font-size: 14px; color: var(--primary-blue); margin-bottom: 2px; }
+.toast span { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+@keyframes toastIn { from { opacity: 0; transform: translateX(110%); } to { opacity: 1; transform: none; } }
+@keyframes toastOut { to { opacity: 0; transform: translateX(110%); } }
+
+/* ============================================================
+   REVEAL
+   ============================================================ */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1); }
+.reveal.visible { opacity: 1; transform: none; }
+.reveal.d1 { transition-delay: .08s; } .reveal.d2 { transition-delay: .16s; } .reveal.d3 { transition-delay: .24s; }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 992px) {
+  :root { --header-h: 80px; }
+  .menu-toggle { display: flex; }
+  .nav { position: fixed; top: calc(var(--header-h) + 6px); left: 14px; right: 14px; flex-direction: column; align-items: stretch; gap: 2px; background: rgba(10, 25, 47, 0.98); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); padding: 10px; max-height: calc(100vh - var(--header-h) - 30px); overflow-y: auto; transform: translateY(-12px); opacity: 0; visibility: hidden; transition: all .3s ease; }
+  .site-header.is-light .nav { background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+  .nav.open { transform: none; opacity: 1; visibility: visible; }
+  .nav-link { width: 100%; justify-content: space-between; padding: 14px 16px; }
+  .dropdown { position: static; opacity: 1; visibility: visible; transform: none; box-shadow: none; background: rgba(0,0,0,.2); border: none; display: none; margin: 4px 0 6px; padding: 4px; }
+  .site-header.is-light .dropdown { background: rgba(0,0,0,.04); }
+  .nav-item.open .dropdown { display: block; }
+  .nav .btn { width: 100%; margin: 6px 0 2px; }
+  .nav > .btn { display: inline-flex; }
+
+  .hero { min-height: auto; padding: calc(var(--header-h) + 50px) 5% 70px; }
+  .hero__grid { grid-template-columns: 1fr; gap: 44px; }
+  .hero__lead { max-width: 48ch; }
+  .scroll-cue { display: none; }
+
+  .grid-3 { grid-template-columns: 1fr; }
+  .row { grid-template-columns: 1fr; gap: 34px; }
+  .row--flip .row__media { order: 0; }
+  .price-grid { grid-template-columns: 1fr; max-width: 440px; margin-inline: auto; }
+  .price-card--featured { transform: none; }
+  .trust { grid-template-columns: 1fr; }
+  .contact { grid-template-columns: 1fr; }
+  .prose-wrap { grid-template-columns: 1fr; }
+  .toc { display: none; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .footer-brand { grid-column: 1 / -1; }
+  .section-pad { padding: 64px 0; }
+  .page-header { padding: calc(var(--header-h) + 40px) 5% 50px; }
+}
+
+@media (max-width: 560px) {
+  .hero h1 { font-size: 2.15rem; }
+  .hero__cta { flex-direction: column; align-items: stretch; }
+  .hero__cta .btn { width: 100%; margin-inline: 0; }
+  .hero-split__pair { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; text-align: center; }
+  .footer-brand .brand { justify-content: center; }
+  .footer-brand p { margin-inline: auto; }
+  .footer-bottom { flex-direction: column; text-align: center; }
+  .contact__box { padding: 24px 20px; }
+  .toast-container { left: 16px; right: 16px; }
+  .toast { min-width: 0; max-width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  .reveal { opacity: 1; transform: none; }
+  html { scroll-behavior: auto; }
+}
+</style>
+</head>
+<body>
+
+<a href="#main" class="skip-link" data-scroll="main">Skip to main content</a>
+<div class="toast-container" id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+<header class="site-header">
+  <div class="header-bar">
+    <a class="brand" data-nav="home" tabindex="0" aria-label="AlphaButton home">
+      <span class="mark">
+        <img src="Logo_1.8.webp" alt="AlphaButton Logo">
+      </span>
+      <span class="word">ALPHABUTTON<span class="dot">.</span></span>
+    </a>
+
+    <nav class="nav" id="nav">
+      <div class="nav-item">
+        <button class="nav-link" data-group="product" data-dropdown aria-haspopup="true">
+          Product
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown">
+          <button data-nav="product">Overview</button>
+          <button data-nav="workflow">Workflow</button>
+          <button data-nav="pricing">Pricing</button>
+        </div>
+      </div>
+      <button class="nav-link" data-group="support" data-nav="support">Support</button>
+      <button class="nav-link" data-group="buy" data-nav="buy">Buy</button>
+    </nav>
+
+    <button class="menu-toggle" id="menu-toggle" aria-label="Menu" aria-expanded="false" aria-controls="nav">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+
+<section id="home" class="page-section active" data-title="AlphaButton — Drawing Generator for 3ds Max">
+  <div class="hero">
+    <div class="hero__grid">
+      <div class="hero__copy">
+        <span class="badge reveal">3ds Max Plugin · 2D Drafting</span>
+        <h1 class="reveal d1">Automate Your 2D Drafting in <span class="accent">3ds&nbsp;Max.</span></h1>
+        <p class="hero__lead reveal d2">AlphaButton is the ultimate drawing generator for 3D artists and architects. Instantly convert complex 3D geometry into ISO-compliant 2D blueprints with automated dimensions and a smart Bill of Materials.</p>
+        <div class="hero__cta reveal d3">
+          <button class="btn btn-primary btn-lg" data-nav="buy"><span class="btn__label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M5 21h14"/></svg>Download Free</span></button>
+          <button class="btn btn-gold btn-lg" data-nav="pricing"><span class="btn__label">View Pricing</span></button>
+        </div>
+        <div class="hero__meta reveal d3">
+          <span>One-click generation</span>
+          <span>ISO 128 / 129 compliant</span>
+          <span>A4 → A0 sheets</span>
+        </div>
+      </div>
+
+      <div class="hero-split reveal d2">
+        <div class="frame">
+          <div class="frame__bar">
+            <span class="frame__dots"><i></i><i></i><i></i></span>
+            <span class="frame__title">AlphaButton — Drawing Generator · 3ds Max 2026</span>
+          </div>
+          <div class="frame__body" style="position:relative;">
+            <div class="hero-split__pair">
+              <div class="hero-pane hero-pane--dark">
+                <div class="hero-split__cap"><span>3D Model</span><span>.max</span></div>
+                <!-- Initial view image, keep eager loading -->
+                <img src="assets/img/model-playground.png" alt="3D model in 3ds Max viewport">
+              </div>
+              <div class="hero-pane hero-pane--light">
+                <div class="hero-split__cap"><span>2D Drawing</span><span>.pdf</span></div>
+                <!-- Initial view image, keep eager loading -->
+                <img src="assets/img/blueprint.svg" alt="Generated ISO 2D blueprint">
+              </div>
+            </div>
+            <div class="hero-split__convert" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><path d="M13 6l6 6-6 6"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="scroll-cue" data-scroll="compat" tabindex="0" aria-label="Scroll down">
+      <span>SCROLL</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </div>
+  </div>
+
+  <div id="compat" class="theme-navy section-pad-sm" style="border-top:1px solid rgba(255,255,255,.06);">
+    <div class="container compat reveal">
+      <span class="compat__label">Built for Autodesk 3ds Max</span>
+      <div class="compat__items">
+        <span class="compat__chip">2026</span><span class="compat__chip">2025</span><span class="compat__chip">2024</span>
+        <span class="compat__chip">2023</span><span class="compat__chip">2022</span><span class="compat__chip">2021 →</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="theme-light section-pad">
+    <div class="container">
+      <div class="row">
+        <div class="row__text reveal">
+          <span class="badge badge--dark">Why AlphaButton</span>
+          <h3 style="color:var(--primary-blue);">From 3D model to print-ready sheet — in one click.</h3>
+          <p>AlphaButton lives inside 3ds Max as a dockable panel. Select your geometry, set your sheet, and let the plugin handle projection, dimensioning and documentation — no manual drafting, no CAD round-trip.</p>
+          <ul class="check-list">
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Orthographic views, dimensions &amp; BOM, fully automated</li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>ISO 5457 sheets from A4 to A0, ready to print</li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Saves hours of tedious manual drafting per project</li>
+          </ul>
+          <div style="margin-top:26px;">
+            <button class="btn btn-primary" data-nav="workflow"><span class="btn__label">See the workflow</span></button>
+          </div>
+        </div>
+        <div class="row__media reveal d1">
+          <div class="frame">
+            <div class="frame__bar"><span class="frame__dots"><i></i><i></i><i></i></span><span class="frame__title">Plugin Panel</span></div>
+            <div class="frame__body" style="background:var(--neu-surface);display:grid;place-items:center;padding:22px;">
+              <!-- PERFORMANCE: Added loading="lazy" to images below the fold -->
+              <img src="assets/img/plugin-full.png" alt="AlphaButton plugin panel in 3ds Max" loading="lazy" style="max-height:540px;width:auto;border-radius:4px;">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="theme-navy section-pad" style="text-align:center;">
+    <div class="container">
+      <h2 class="reveal" style="color:#fff;font-size:clamp(1.9rem,4vw,2.6rem);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;">Stop exporting to CAD.</h2>
+      <p class="reveal d1" style="color:var(--text-gray);font-size:1.12rem;max-width:52ch;margin:0 auto 30px;line-height:1.7;">Install AlphaButton, select your geometry, and generate your first ISO-compliant sheet in under a minute.</p>
+      <div class="reveal d2" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-primary btn-lg" data-nav="buy"><span class="btn__label">Download Free</span></button>
+        <button class="btn btn-gold btn-lg" data-nav="support"><span class="btn__label">Talk to Support</span></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="product" class="page-section" data-title="Product — AlphaButton">
+  <div class="page-header">
+    <span class="badge reveal">Overview</span>
+    <h1 class="reveal d1">Key Features</h1>
+    <p class="reveal d2">Everything you need to turn 3D geometry into documentation, built into one dockable panel.</p>
+  </div>
+  <div class="theme-light section-pad">
+    <div class="container">
+      <div class="grid grid-3">
+        <article class="card reveal">
+          <div class="num">01</div>
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3l14 9-6 1.5L11 19z"/></svg></div>
+          <h3>One-Click Generation</h3>
+          <p>Transform 3D models into precise 2D vector drawings instantly. Forget manual drafting and save hours of tedious work.</p>
+        </article>
+        <article class="card reveal d1">
+          <div class="num">02</div>
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h18v8H3z"/><path d="M7 8v3M11 8v4M15 8v3M19 8v4"/></svg></div>
+          <h3>Automated Dimensions &amp; BOM</h3>
+          <p>Automatically extract accurate dimensions, build dynamic Bill of Materials tables, and flag complex or zero-thickness geometry on the fly.</p>
+        </article>
+        <article class="card reveal d2">
+          <div class="num">03</div>
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M14 3v4h4"/><path d="M9 13h6M9 17h6"/></svg></div>
+          <h3>ISO-Compliant Layouts</h3>
+          <p>Generate ready-to-print PDF sheets from A4 to A0 with professional title blocks, scaled perfectly to your project needs.</p>
+        </article>
+      </div>
+      <div style="text-align:center;margin-top:46px;" class="reveal">
+        <button class="btn btn-primary btn-lg" data-nav="workflow"><span class="btn__label">See how it works</span></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="workflow" class="page-section" data-title="Workflow — AlphaButton">
+  <div class="page-header">
+    <span class="badge reveal">The Workflow</span>
+    <h1 class="reveal d1">Configure Once.<br>Generate Forever.</h1>
+    <p class="reveal d2">Three steps from a busy 3ds Max scene to a clean, dimensioned PDF sheet.</p>
+  </div>
+  <div class="theme-light section-pad">
+    <div class="container">
+
+      <div class="row reveal">
+        <div class="row__text">
+          <div class="row__kicker">Step 01 — Select &amp; Configure</div>
+          <h3>A full drafting studio, docked in your viewport.</h3>
+          <p>Set the title block, choose your sheet size and projection standard, and pick exactly which orthographic views to output. AlphaButton remembers your presets between sessions.</p>
+          <ul class="check-list">
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>First- &amp; third-angle projection, compact or spacious</li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>ISO 5457 sheets — A4 Portrait through A0 Landscape</li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Visible edges, hidden edges or shaded output</li>
+          </ul>
+        </div>
+        <div class="row__media">
+          <div class="frame">
+            <div class="frame__bar"><span class="frame__dots"><i></i><i></i><i></i></span><span class="frame__title">Plugin Panel</span></div>
+            <div class="frame__body" style="background:var(--neu-surface);display:grid;place-items:center;padding:22px;">
+              <img src="assets/img/plugin-full.png" alt="AlphaButton plugin panel" loading="lazy" style="max-height:540px;width:auto;border-radius:4px;">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row row--flip reveal">
+        <div class="row__text">
+          <div class="row__kicker">Step 02 — Read the Geometry</div>
+          <h3>Handles real production scenes, not just primitives.</h3>
+          <p>From simple boxes and cylinders to dense, multi-part assemblies, AlphaButton resolves visible and hidden edges and flags complex volumetric or zero-thickness parts automatically.</p>
+          <ul class="check-list">
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Detail drawings for complex volumetric elements</li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Metric (mm) or Imperial (inches) unit systems</li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Oblique-stroke or arrow dimension styles (ISO 129-1)</li>
+          </ul>
+        </div>
+        <div class="row__media">
+          <div class="frame">
+            <div class="frame__bar"><span class="frame__dots"><i></i><i></i><i></i></span><span class="frame__title">Scene — primitives.max</span></div>
+            <div class="frame__body" style="background:#333330;"><img src="assets/img/model-primitives.png" alt="3D primitives in scene" loading="lazy"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row reveal">
+        <div class="row__text">
+          <div class="row__kicker">Step 03 — Publish the PDF</div>
+          <h3>Documentation-grade sheets, ready to print.</h3>
+          <p>Orthographic views, dimension chains, a populated title block and an itemised Bill of Materials — laid out on a clean ISO sheet and exported straight to PDF. Open it the instant it's done.</p>
+          <ul class="check-list">
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Professional title block with project, author &amp; date</li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Dynamic Bill of Materials with quantities &amp; materials</li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Auto-open PDF after creation — no extra steps</li>
+          </ul>
+          <div style="margin-top:26px;"><button class="btn btn-primary" data-nav="pricing"><span class="btn__label">View Pricing</span></button></div>
+        </div>
+        <div class="row__media">
+          <div class="frame frame--light">
+            <div class="frame__bar"><span class="frame__dots"><i></i><i></i><i></i></span><span class="frame__title">workstation-desk_A3.pdf</span></div>
+            <div class="frame__body"><img src="assets/img/blueprint.svg" alt="Generated ISO-compliant 2D blueprint" loading="lazy"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="pricing" class="page-section" data-title="Pricing — AlphaButton">
+  <div class="page-header">
+    <span class="badge reveal">Pricing</span>
+    <h1 class="reveal d1">Start Free.<br>Upgrade When You Ship.</h1>
+    <p class="reveal d2">One plugin, three licenses. No subscriptions — buy once and draft away.</p>
+  </div>
+  <div class="theme-light section-pad">
+    <div class="container">
+      <div class="price-grid reveal">
+        <article class="price-card">
+          <div class="price-card__name">Free License</div>
+          <div class="price-card__price"><span class="amt">$0</span></div>
+          <div class="price-card__sub">For trying it out on real scenes.</div>
+          <ul>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Full one-click generation</li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>ISO sheets A4 → A0</li>
+            <li class="no"><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span>Watermarked output</li>
+          </ul>
+          <button class="btn btn-light btn-block" data-nav="buy"><span class="btn__label">Download Free</span></button>
+        </article>
+        <article class="price-card">
+          <div class="price-card__name">Basic</div>
+          <div class="price-card__price"><span class="amt">$10</span><span class="per">/ one-time</span></div>
+          <div class="price-card__sub">For freelancers &amp; small jobs.</div>
+          <ul>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span><strong>100 pages</strong> of drawings</li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span><strong>No time limit</strong></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>No watermark</li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Email support</li>
+          </ul>
+          <button class="btn btn-light btn-block" data-nav="buy"><span class="btn__label">Buy now</span></button>
+        </article>
+        <article class="price-card price-card--featured">
+          <span class="price-card__tag">Most popular</span>
+          <div class="price-card__name">Pro</div>
+          <div class="price-card__price"><span class="amt">$100</span><span class="per">/ one-time</span></div>
+          <div class="price-card__sub">For studios in constant production.</div>
+          <ul>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span><strong>Unlimited generation</strong></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Valid for <strong>365 days</strong></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>No watermark</li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Priority support</li>
+          </ul>
+          <button class="btn btn-primary btn-block" data-nav="buy"><span class="btn__label">Buy now</span></button>
+        </article>
+      </div>
+      <p class="reveal" style="text-align:center;margin-top:26px;font-size:14px;color:var(--text-muted);">Includes a <strong style="color:var(--primary-blue);">14-day money-back guarantee</strong>. See our <a data-nav="refund" style="color:var(--accent-hover);text-decoration:underline;text-underline-offset:2px;cursor:pointer;">Refund Policy</a>.</p>
+    </div>
+  </div>
+</section>
+
+<section id="buy" class="page-section" data-title="Buy — AlphaButton">
+  <div class="page-header">
+    <span class="badge reveal">Buy AlphaButton</span>
+    <h1 class="reveal d1">Choose Your License.</h1>
+    <p class="reveal d2">One-time licenses — no subscriptions. Backed by a 14-day money-back guarantee and secure checkout.</p>
+  </div>
+  <div class="theme-navy section-pad">
+    <div class="container">
+      <div class="price-grid reveal">
+        <article class="price-card">
+          <div class="price-card__name">Free License</div>
+          <div class="price-card__price"><span class="amt">$0</span></div>
+          <div class="price-card__sub">Try it on real production scenes.</div>
+          <ul>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Full one-click generation</li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>ISO sheets A4 → A0</li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Dimensions &amp; BOM</li>
+            <li class="no"><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span>Watermarked output</li>
+          </ul>
+          <button class="btn btn-light btn-block"><span class="btn__label">Download Free</span></button>
+        </article>
+        <article class="price-card">
+          <div class="price-card__name">Basic</div>
+          <div class="price-card__price"><span class="amt">$10</span><span class="per">/ one-time</span></div>
+          <div class="price-card__sub">For freelancers &amp; small jobs.</div>
+          <ul>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span><strong>100 pages</strong> of drawings</li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span><strong>No time limit</strong></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>No watermark</li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Email support</li>
+          </ul>
+          <button class="btn btn-light btn-block"><span class="btn__label">Buy now</span></button>
+        </article>
+        <article class="price-card price-card--featured">
+          <span class="price-card__tag">Most popular</span>
+          <div class="price-card__name">Pro</div>
+          <div class="price-card__price"><span class="amt">$100</span><span class="per">/ one-time</span></div>
+          <div class="price-card__sub">For studios in constant production.</div>
+          <ul>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span><strong>Unlimited generation</strong></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Valid for <strong>365 days</strong></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>No watermark</li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Priority support</li>
+          </ul>
+          <button class="btn btn-primary btn-block"><span class="btn__label">Buy now</span></button>
+        </article>
+      </div>
+
+      <div class="trust reveal">
+        <div class="trust__item">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+          <div><h4>Secure checkout</h4><p>Payments &amp; invoicing handled by Paddle, our Merchant of Record.</p></div>
+        </div>
+        <div class="trust__item">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 109-9"/><path d="M3 4v5h5"/><path d="M12 8v4l3 2"/></svg></span>
+          <div><h4>14-day guarantee</h4><p>Full refund if the software doesn't perform as advertised.</p></div>
+        </div>
+        <div class="trust__item">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M5 21h14"/></svg></span>
+          <div><h4>Instant download</h4><p>Get your license key and installer by email, immediately.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="theme-light section-pad">
+    <div class="container">
+      <div class="sec-head sec-head--center reveal"><span class="badge badge--dark">Licensing</span><h2>Questions About Buying</h2></div>
+      <div class="faq reveal">
+        <details><summary>What's the difference between Basic and Pro?<span class="pm"></span></summary><div class="faq-a">Basic is a one-time license for up to 100 pages of drawings with no time limit — ideal for occasional projects. Pro removes the page cap entirely with unlimited generation, valid for 365 days from activation.</div></details>
+        <details><summary>Is this a subscription?<span class="pm"></span></summary><div class="faq-a">No. Basic and Pro are one-time purchases. Pro's 365-day validity is the active license window; there is no automatic recurring charge.</div></details>
+        <details><summary>Which versions of 3ds Max are supported?<span class="pm"></span></summary><div class="faq-a">AlphaButton supports Autodesk 3ds Max 2021 and newer, including 2026. The same license works across all supported versions.</div></details>
+        <details><summary>How do I get a refund?<span class="pm"></span></summary><div class="faq-a">We offer a 14-day money-back guarantee if the software does not perform as advertised. Email <a href="mailto:office@alphabutton.xyz">office@alphabutton.xyz</a> and read the full <a data-nav="refund" style="cursor:pointer;">Refund Policy</a>.</div></details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="support" class="page-section" data-title="Support — AlphaButton">
+  <div class="page-header">
+    <span class="badge reveal">Support</span>
+    <h1 class="reveal d1">We're Here to Help.</h1>
+    <p class="reveal d2">Documentation, system requirements and direct support — usually answered within one business day.</p>
+  </div>
+  <div class="theme-light section-pad">
+    <div class="container">
+      <div class="grid grid-3" style="margin-bottom:0;">
+        <article class="card reveal">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h7a2 2 0 012 2v12a2 2 0 00-2-2H4z"/><path d="M20 5h-7a2 2 0 00-2 2v12a2 2 0 012-2h7z"/></svg></div>
+          <h3>Documentation</h3>
+          <p>Step-by-step guides covering installation, sheet setup, projection standards and the Bill of Materials.</p>
+        </article>
+        <article class="card reveal d1">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 015 .3c0 1.7-2.5 2-2.5 3.7"/><path d="M12 17h.01"/></svg></div>
+          <h3>Troubleshooting</h3>
+          <p>Zero-thickness warnings, missing edges or scale issues? The most common fixes, in one place.</p>
+        </article>
+        <article class="card reveal d2">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="1.5"/><path d="M8 21h8M12 17v4"/></svg></div>
+          <h3>System Requirements</h3>
+          <p>Autodesk 3ds Max 2021–2026 · Windows 10/11 · 8&nbsp;GB RAM minimum. A PDF reader for output.</p>
+        </article>
+      </div>
+    </div>
+  </div>
+  <div class="theme-navy section-pad">
+    <div class="container">
+      <div class="contact">
+        <div class="contact__intro reveal">
+          <span class="badge">Get in touch</span>
+          <h2 style="color:#fff;font-size:clamp(1.7rem,3.5vw,2.3rem);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;">Send Us a Message</h2>
+          <p style="color:var(--text-gray);line-height:1.7;margin-bottom:30px;">Tell us your 3ds Max version and what you're trying to draft. The more detail, the faster we can help.</p>
+          <div class="contact__direct">
+            <div class="line"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/></svg></span><div><h4>Email</h4><a href="mailto:office@alphabutton.xyz">office@alphabutton.xyz</a></div></div>
+            <div class="line"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div><h4>Response time</h4><p>Within 1 business day, Mon–Fri.</p></div></div>
+            <div class="line"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V8l7-5 7 5v13z"/><path d="M9 21v-6h6v6"/></svg></span><div><h4>Operated by</h4><p>Yana Hrytsai (Sole Proprietor), Ukraine</p></div></div>
+          </div>
+        </div>
+        <div class="contact__box reveal d1">
+          <form id="contact-form">
+            <div class="field"><label for="cname">Name</label><input id="cname" type="text" placeholder="Your name" required></div>
+            <div class="field"><label for="cemail">Email</label><input id="cemail" type="email" placeholder="you@studio.com" required></div>
+            <div class="field"><label for="cver">3ds Max version</label><select id="cver"><option>2026</option><option>2025</option><option>2024</option><option>2023</option><option>2022</option><option>2021</option></select></div>
+            <div class="field"><label for="cmsg">Message</label><textarea id="cmsg" placeholder="Describe the scene, the sheet you need, and any errors…" required></textarea></div>
+            <button class="btn btn-primary btn-block" type="submit"><span class="btn__label">Send Message</span></button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="theme-light section-pad">
+    <div class="container">
+      <div class="sec-head sec-head--center reveal"><span class="badge badge--dark">Help Center</span><h2>Common Questions</h2></div>
+      <div class="faq reveal">
+        <details><summary>How do I install AlphaButton?<span class="pm"></span></summary><div class="faq-a">Download the installer from your purchase email, close 3ds Max, run the installer, then restart 3ds Max. AlphaButton appears as a dockable panel you can launch from the plugin menu.</div></details>
+        <details><summary>It says "Select objects first" — what now?<span class="pm"></span></summary><div class="faq-a">AlphaButton generates drawings from your current selection. Select one or more objects in the viewport and the Generate button activates, showing the object count.</div></details>
+        <details><summary>Why am I getting zero-thickness warnings?<span class="pm"></span></summary><div class="faq-a">Some geometry contains faces with no depth, which can't be dimensioned reliably. Enable "Include Complex Volumetric Part/Elements" under Detail Drawings, or add thickness to the offending objects, and re-generate.</div></details>
+        <details><summary>Where are my settings saved?<span class="pm"></span></summary><div class="faq-a">Use "Save settings" in the Plugin Settings rollout to persist your title block, sheet and output preferences between sessions. "Restore default settings" reverts everything to factory defaults.</div></details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="terms" class="page-section" data-title="Terms of Use — AlphaButton">
+  <div class="page-header"><span class="badge">Legal</span><h1>Terms of Use</h1><p>The terms governing your use of the AlphaButton plugin and this website.</p></div>
+  <div class="theme-light section-pad">
+    <div class="container">
+      <div class="prose-wrap">
+        <aside class="toc">
+          <h4>On this page</h4>
+          <ul>
+            <li><a data-scroll="t-acc">Acceptance</a></li>
+            <li><a data-scroll="t-lic">License</a></li>
+            <li><a data-scroll="t-res">Restrictions</a></li>
+            <li><a data-scroll="t-ip">Intellectual property</a></li>
+            <li><a data-scroll="t-pay">Payment</a></li>
+            <li><a data-scroll="t-war">Disclaimer</a></li>
+            <li><a data-scroll="t-lia">Liability</a></li>
+            <li><a data-scroll="t-con">Contact</a></li>
+          </ul>
+        </aside>
+        <article class="prose reveal">
+          <p class="updated">Last updated: 23 May 2026</p>
+          <h2 id="t-acc">1. Acceptance of terms</h2>
+          <p>These Terms of Use ("Terms") form a binding agreement between you and <strong>Yana Hrytsai (Sole Proprietor)</strong> ("AlphaButton", "we", "us"), operating from Ukraine. By downloading, installing or using the AlphaButton plugin (the "Software") or this website, you agree to these Terms.</p>
+          <p><em>This is a placeholder legal document provided for setup and moderation purposes. Have it reviewed by a qualified lawyer before publishing.</em></p>
+          <h2 id="t-lic">2. License grant</h2>
+          <p>Subject to your compliance with these Terms and payment of any applicable fees, we grant you a non-exclusive, non-transferable, revocable license to install and use the Software for your own commercial or personal projects, according to the tier you purchased:</p>
+          <ul><li><strong>Free License</strong> — full functionality with watermarked output.</li><li><strong>Basic</strong> — up to 100 pages of generated drawings, with no time limit.</li><li><strong>Pro</strong> — unlimited generation, valid for 365 days from activation.</li></ul>
+          <h2 id="t-res">3. Restrictions</h2>
+          <p>You agree not to: (a) resell, sublicense, rent or redistribute the Software; (b) reverse-engineer, decompile or attempt to derive the source code, except where permitted by law; (c) circumvent license limits, watermarking or activation; or (d) use the Software to violate any applicable law or third-party right.</p>
+          <h2 id="t-ip">4. Intellectual property</h2>
+          <p>The Software, its code, design and documentation remain the exclusive property of AlphaButton. Drawings and files you generate from your own 3D models belong to you. "Autodesk" and "3ds Max" are trademarks of Autodesk, Inc.; AlphaButton is an independent product and is not affiliated with or endorsed by Autodesk.</p>
+          <h2 id="t-pay">5. Payment, taxes &amp; renewals</h2>
+          <p>Payments are processed by our Merchant of Record, Paddle, which handles billing, invoicing and applicable taxes. Basic and Pro are one-time purchases; Pro's 365-day validity is a license window and does not auto-renew unless you choose to repurchase.</p>
+          <h2 id="t-war">6. Disclaimer of warranties</h2>
+          <p>The Software is provided "as is" and "as available" without warranties of any kind, express or implied, including merchantability, fitness for a particular purpose and non-infringement. We do not warrant that generated drawings are suitable for regulatory, structural or manufacturing certification without independent verification.</p>
+          <h2 id="t-lia">7. Limitation of liability</h2>
+          <p>To the maximum extent permitted by law, AlphaButton shall not be liable for any indirect, incidental, special or consequential damages. Our total liability shall not exceed the amount you paid for the Software in the 12 months preceding the claim.</p>
+          <h2 id="t-con">8. Contact</h2>
+          <p>Questions about these Terms? Contact <a href="mailto:office@alphabutton.xyz">office@alphabutton.xyz</a>. See also our <a data-nav="refund" style="cursor:pointer;">Refund Policy</a> and <a data-nav="privacy" style="cursor:pointer;">Privacy Policy</a>.</p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="refund" class="page-section" data-title="Refund Policy — AlphaButton">
+  <div class="page-header"><span class="badge">Legal</span><h1>Refund Policy</h1><p>A 14-day money-back guarantee, and how to request a refund.</p></div>
+  <div class="theme-light section-pad">
+    <div class="container">
+      <div class="prose-wrap">
+        <aside class="toc">
+          <h4>On this page</h4>
+          <ul>
+            <li><a data-scroll="r-gua">14-day guarantee</a></li>
+            <li><a data-scroll="r-eli">Eligibility</a></li>
+            <li><a data-scroll="r-how">How to request</a></li>
+            <li><a data-scroll="r-pro">Processing</a></li>
+            <li><a data-scroll="r-exc">Exceptions</a></li>
+            <li><a data-scroll="r-con">Contact</a></li>
+          </ul>
+        </aside>
+        <article class="prose reveal">
+          <p class="updated">Last updated: 23 May 2026</p>
+          <div class="callout"><b>14-day money-back guarantee.</b> We offer a full refund within 14 days of purchase if the software does not perform as advertised. If AlphaButton doesn't do what we promise, you get your money back.</div>
+          <h2 id="r-gua">1. Our guarantee</h2>
+          <p>This Refund Policy applies to purchases of AlphaButton from <strong>Yana Hrytsai (Sole Proprietor)</strong>, operating from Ukraine. We stand behind the Software with a <strong>14-day money-back guarantee if the software does not perform as advertised</strong>. If, within 14 days of your purchase, AlphaButton fails to deliver the functionality described on this website, you are entitled to a full refund of the purchase price.</p>
+          <p><em>This is a placeholder legal document provided for setup and moderation purposes. Have it reviewed by a qualified lawyer before publishing.</em></p>
+          <h2 id="r-eli">2. Eligibility</h2>
+          <ul><li>Your refund request must be made within <strong>14 days</strong> of the original purchase date.</li><li>The request must relate to the Software not performing as advertised.</li><li>Please give us a reasonable opportunity to resolve the issue first via Support.</li></ul>
+          <h2 id="r-how">3. How to request a refund</h2>
+          <p>Email <a href="mailto:office@alphabutton.xyz">office@alphabutton.xyz</a> from the address used at purchase, including your order or invoice number and a short description of the problem. Our Merchant of Record, Paddle, processes the refund back to your original payment method.</p>
+          <h2 id="r-pro">4. Processing &amp; timing</h2>
+          <p>Approved refunds are issued to your original payment method. Depending on your bank, funds typically appear within 5–10 business days after approval. You'll receive email confirmation once the refund is initiated.</p>
+          <h2 id="r-exc">5. Exceptions</h2>
+          <p>Refunds may be declined where a request is made after the 14-day window, where there is evidence of license abuse or fraud, or where the issue is unrelated to the advertised functionality. These exceptions do not affect any statutory rights you may have under applicable consumer law. The Free License is provided at no cost and has no associated refund.</p>
+          <h2 id="r-con">6. Contact</h2>
+          <p>For any refund question, contact <a href="mailto:office@alphabutton.xyz">office@alphabutton.xyz</a>. See also our <a data-nav="terms" style="cursor:pointer;">Terms of Use</a> and <a data-nav="privacy" style="cursor:pointer;">Privacy Policy</a>.</p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="privacy" class="page-section" data-title="Privacy Policy — AlphaButton">
+  <div class="page-header"><span class="badge">Legal</span><h1>Privacy Policy</h1><p>What data we collect, why, and the choices you have.</p></div>
+  <div class="theme-light section-pad">
+    <div class="container">
+      <div class="prose-wrap">
+        <aside class="toc">
+          <h4>On this page</h4>
+          <ul>
+            <li><a data-scroll="p-int">Overview</a></li>
+            <li><a data-scroll="p-col">Data we collect</a></li>
+            <li><a data-scroll="p-use">How we use it</a></li>
+            <li><a data-scroll="p-coo">Cookies</a></li>
+            <li><a data-scroll="p-sha">Sharing</a></li>
+            <li><a data-scroll="p-rig">Your rights</a></li>
+            <li><a data-scroll="p-con">Contact</a></li>
+          </ul>
+        </aside>
+        <article class="prose reveal">
+          <p class="updated">Last updated: 23 May 2026</p>
+          <h2 id="p-int">1. Overview</h2>
+          <p>This Privacy Policy explains how <strong>Yana Hrytsai (Sole Proprietor)</strong> ("AlphaButton", "we", "us"), operating from Ukraine, collects and processes personal data when you visit this website or use the AlphaButton plugin.</p>
+          <p><em>This is a placeholder legal document provided for setup and moderation purposes. Have it reviewed by a qualified lawyer before publishing.</em></p>
+          <h2 id="p-col">2. Data we collect</h2>
+          <ul><li><strong>Purchase data</strong> — name, email and billing details, collected and processed by our Merchant of Record, Paddle. We do not store full payment card numbers.</li><li><strong>Support data</strong> — the contents of messages you send us, including your email and 3ds Max version.</li><li><strong>Usage data</strong> — anonymised analytics about how the website is used.</li></ul>
+          <h2 id="p-use">3. How we use your data</h2>
+          <p>We use your data to deliver and activate your license, provide support, issue invoices, comply with legal and tax obligations, and improve the Software and website. We do not sell your personal data.</p>
+          <h2 id="p-coo">4. Cookies</h2>
+          <p>We use essential cookies to keep the site working and analytics cookies to understand usage. You can accept or reject non-essential cookies via the banner shown on your first visit, and clear cookies at any time in your browser settings.</p>
+          <h2 id="p-sha">5. Sharing with third parties</h2>
+          <p>We share data only with processors needed to run the service — principally Paddle (payments &amp; invoicing) and our analytics and email providers — and only as necessary.</p>
+          <h2 id="p-rig">6. Your rights</h2>
+          <p>Subject to applicable law, you may request access to, correction of, or deletion of your personal data, and may object to or restrict certain processing. To exercise these rights, email us using the address below.</p>
+          <h2 id="p-con">7. Contact</h2>
+          <p>For privacy requests, contact <a href="mailto:office@alphabutton.xyz">office@alphabutton.xyz</a>. See also our <a data-nav="terms" style="cursor:pointer;">Terms of Use</a> and <a data-nav="refund" style="cursor:pointer;">Refund Policy</a>.</p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a class="brand" data-nav="home" style="cursor:pointer;">
+        <span class="mark"><img src="Logo_1.8.webp" alt="AlphaButton Logo" style="filter: brightness(0) invert(1); opacity: 0.8;"></span>
+        <span class="word">ALPHABUTTON<span class="dot">.</span></span>
+      </a>
+      <p>The drawing generator for 3ds Max. Turn 3D geometry into ISO-compliant 2D documentation, automatically.</p>
+    </div>
+    <div class="footer-col"><h4>Product</h4><ul><li><a data-nav="product">Overview</a></li><li><a data-nav="workflow">Workflow</a></li><li><a data-nav="pricing">Pricing</a></li><li><a data-nav="buy">Download</a></li></ul></div>
+    <div class="footer-col"><h4>Company</h4><ul><li><a data-nav="support">Support</a></li><li><a data-nav="terms">Terms of Use</a></li><li><a data-nav="refund">Refund Policy</a></li><li><a data-nav="privacy">Privacy Policy</a></li></ul></div>
+    <div class="footer-col"><h4>Details</h4><p class="footer-legal-co"><strong>Yana Hrytsai</strong> (Sole Proprietor)<br>[Street and House Number],<br>[City], [Zip Code], Ukraine<br><a href="mailto:office@alphabutton.xyz">office@alphabutton.xyz</a></p></div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 AlphaButton — Drawing Generator. All rights reserved.</span>
+    <span>Not affiliated with Autodesk. 3ds Max® is a trademark of Autodesk, Inc.</span>
+  </div>
+</footer>
+
+<div class="cookie" id="cookie" role="dialog" aria-label="Cookie consent">
+  <div class="cookie__txt"><b>We use cookies.</b> AlphaButton uses essential and analytics cookies to keep the site working and understand how it's used. See our <a data-nav="privacy">Privacy Policy</a>.</div>
+  <div class="cookie__actions"><button class="btn btn-light" data-cookie="reject"><span class="btn__label">Reject</span></button><button class="btn btn-primary" data-cookie="accept"><span class="btn__label">Accept</span></button></div>
+</div>
+
+<button class="scroll-top" id="scroll-top" aria-label="Back to top">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<script>
+/* ============================================================
+   AlphaButton — single-page app behaviour (Modernized)
+   ============================================================ */
+(function () {
+  'use strict';
+
+  /* ---- which top-nav item is "active" for a given section ---- */
+  const NAV_GROUP = {
+    home: 'home',
+    product: 'product', workflow: 'product', pricing: 'product',
+    support: 'support',
+    buy: 'buy',
+    terms: '', refund: '', privacy: ''
+  };
+
+  function $(s, c) { return (c || document).querySelector(s); }
+  function $all(s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); }
+
+  /* ---------------- reveal ---------------- */
+  let revObserver = null;
+  function revealInit(scope) {
+    if (!('IntersectionObserver' in window)) {
+      $all('.reveal', scope).forEach(function (el) { el.classList.add('visible'); });
+      return;
+    }
+    if (!revObserver) {
+      revObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { e.target.classList.add('visible'); revObserver.unobserve(e.target); }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+    }
+    $all('.reveal:not(.visible)', scope).forEach(function (el) { revObserver.observe(el); });
+  }
+
+  /* ---------------- SPA navigation ---------------- */
+  window.navigate = function (id, opts) {
+    opts = opts || {};
+    const target = document.getElementById(id);
+    if (!target) return;
+    $all('.page-section').forEach(function (s) { s.classList.remove('active'); });
+    target.classList.add('active');
+
+    // active nav highlight
+    const group = NAV_GROUP[id] || '';
+    $all('.nav-link[data-group]').forEach(function (l) {
+      l.classList.toggle('active-link', l.getAttribute('data-group') === group && group !== '');
+    });
+
+    // reset reveal state inside the freshly shown section, then observe
+    $all('.reveal', target).forEach(function (el) { el.classList.remove('visible'); });
+    if (!opts.noScroll) window.scrollTo({ top: 0, behavior: 'auto' });
+    requestAnimationFrame(function () { revealInit(target); });
+
+    // close mobile menu
+    closeMenu();
+
+    // update hash without jumping
+    if (history.replaceState) history.replaceState(null, '', '#' + id);
+    document.title = (target.getAttribute('data-title') || 'AlphaButton — Drawing Generator');
+  };
+
+  /* ---------------- mobile menu ---------------- */
+  function closeMenu() {
+    const nav = $('#nav'); 
+    const tog = $('#menu-toggle');
+    if (nav) nav.classList.remove('open');
+    if (tog) { tog.classList.remove('active'); tog.setAttribute('aria-expanded', 'false'); }
+    $all('.nav-item.open').forEach(function (i) { i.classList.remove('open'); });
+  }
+  
+  function toggleMenu() {
+    const nav = $('#nav'); 
+    const tog = $('#menu-toggle');
+    const open = nav.classList.toggle('open');
+    tog.classList.toggle('active', open);
+    tog.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+
+  /* ---------------- toast ---------------- */
+  window.showToast = function (title, msg, type) {
+    const c = $('#toast-container'); if (!c) return;
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.innerHTML = '<span class="toast-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>' +
+      '<div><b></b><span></span></div>';
+    
+    // SECURITY Note: Using textContent correctly prevents XSS
+    t.querySelector('b').textContent = title;
+    t.querySelector('span:last-child').textContent = msg;
+    c.appendChild(t);
+    setTimeout(function () { t.classList.add('removing'); setTimeout(function () { t.remove(); }, 320); }, 4200);
+  };
+
+  /* ---------------- init ---------------- */
+  document.addEventListener('DOMContentLoaded', function () {
+
+    /* dynamic header inversion on scroll */
+    function updateHeaderTheme() {
+      const header = document.querySelector('.site-header');
+      if (!header) return;
+      
+      const headerRect = header.getBoundingClientRect();
+      const checkY = headerRect.top + (headerRect.height / 2);
+      
+      // All sections that act as a dark background
+      const darkSections = document.querySelectorAll('.theme-navy, .hero, .page-header, footer');
+      
+      let overDark = false;
+      for (let i = 0; i < darkSections.length; i++) {
+        const rect = darkSections[i].getBoundingClientRect();
+        if (checkY >= rect.top && checkY <= rect.bottom) {
+          overDark = true;
+          break;
+        }
+      }
+      
+      if (overDark) {
+        header.classList.add('is-light');
+      } else {
+        header.classList.remove('is-light');
+      }
+    }
+    
+    window.addEventListener('scroll', updateHeaderTheme, { passive: true });
+    window.addEventListener('resize', updateHeaderTheme, { passive: true });
+    // Execute on initial load with slight delay for accurate layout calculation
+    setTimeout(updateHeaderTheme, 50);
+
+    /* delegated clicks */
+    document.addEventListener('click', function (ev) {
+      const navEl = ev.target.closest('[data-nav]');
+      if (navEl) { ev.preventDefault(); window.navigate(navEl.getAttribute('data-nav')); return; }
+
+      const ddToggle = ev.target.closest('[data-dropdown]');
+      if (ddToggle && window.matchMedia('(max-width: 992px)').matches) {
+        ev.preventDefault();
+        ddToggle.closest('.nav-item').classList.toggle('open');
+        return;
+      }
+
+      const tocEl = ev.target.closest('[data-scroll]');
+      if (tocEl) {
+        ev.preventDefault();
+        const tt = document.getElementById(tocEl.getAttribute('data-scroll'));
+        if (tt) window.scrollTo({ top: tt.getBoundingClientRect().top + window.scrollY - 100, behavior: 'smooth' });
+        return;
+      }
+    });
+
+    const tog = $('#menu-toggle');
+    if (tog) tog.addEventListener('click', toggleMenu);
+
+    /* scroll-to-top */
+    const top = $('#scroll-top');
+    if (top) {
+      top.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+      window.addEventListener('scroll', function () {
+        top.classList.toggle('visible', window.scrollY > 500);
+      }, { passive: true });
+    }
+
+    /* contact form (demo) */
+    const form = $('#contact-form');
+    if (form) {
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        showToast('Message sent', "Thanks — we'll reply to your email within one business day.", 'success');
+        form.reset();
+      });
+    }
+
+    /* cookie banner */
+    const cookie = $('#cookie');
+    if (cookie) {
+      let consented = false;
+      try { consented = localStorage.getItem('ab_cookie') === '1'; } catch (e) {}
+      if (!consented) setTimeout(function () { cookie.classList.add('show'); }, 1100);
+      $all('[data-cookie]', cookie).forEach(function (b) {
+        b.addEventListener('click', function () {
+          try { localStorage.setItem('ab_cookie', b.getAttribute('data-cookie') === 'reject' ? '0' : '1'); } catch (e) {}
+          cookie.classList.remove('show');
+        });
+      });
+    }
+
+    /* deep link via hash */
+    const initial = (location.hash || '').replace('#', '');
+    if (initial && document.getElementById(initial)) {
+      window.navigate(initial, { noScroll: true });
+    } else {
+      revealInit(document.querySelector('.page-section.active'));
+    }
+  });
+})();
+</script>
+</body>
+</html>
