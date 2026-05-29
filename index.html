@@ -241,9 +241,7 @@ main { flex-grow: 1; width: 100%; }
 .page-section.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
 
-/* Гармонізація габаритів: Всі блоки контенту використовують єдиний падінг
-  clamp(20px, 5vw, 40px), гарантуючи ідеально рівні краї на будь-якому екрані.
-*/
+/* Гармонізація габаритів: Всі блоки контенту використовують єдиний падінг */
 .container,
 .hero__grid,
 .footer-grid,
@@ -260,10 +258,10 @@ main { flex-grow: 1; width: 100%; }
 .theme-white { background: #fff; }
 .theme-navy  { background: var(--primary-blue); color: var(--text-light); }
 
-/* Gradient Transition */
+/* Gradient Transition - Висота градієнта відповідає висоті хедера */
 .section-gradient {
-  background: linear-gradient(to bottom, var(--primary-blue) 0%, var(--bg-light) 110px, var(--bg-light) 100%);
-  padding-top: 130px;
+  background: linear-gradient(to bottom, var(--primary-blue) 0%, var(--bg-light) var(--header-h), var(--bg-light) 100%);
+  padding-top: calc(var(--header-h) + 20px);
 }
 
 /* page header band */
@@ -351,7 +349,7 @@ main { flex-grow: 1; width: 100%; }
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 28px; }
 .grid-3 { grid-template-columns: repeat(3, 1fr); }
 .card {
-  background: #fff; padding: 48px 40px; border-radius: 8px; /* Increased padding */
+  background: #fff; padding: 48px 40px; border-radius: 8px; 
   box-shadow: 0 10px 30px rgba(0,0,0,.05); border-top: 4px solid var(--primary-blue);
   transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease;
   display: flex; flex-direction: column; gap: 14px;
@@ -483,7 +481,15 @@ main { flex-grow: 1; width: 100%; }
    FOOTER
    ============================================================ */
 footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px 0 30px; border-top: 5px solid var(--accent-yellow); }
-.footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1.4fr; gap: 40px; }
+
+/* Гармонізований розподіл колонок футера */
+.footer-grid { 
+  display: grid; 
+  grid-template-columns: 2fr 1fr 1fr 1.25fr; 
+  gap: clamp(30px, 4vw, 60px); 
+  align-items: start;
+}
+
 .footer-brand .brand { margin-bottom: 18px; }
 .footer-brand p { max-width: 34ch; line-height: 1.65; font-size: 14.5px; }
 .footer-col h4 { color: #fff; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 18px; font-weight: 700; }
@@ -561,7 +567,6 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
   .footer-brand { grid-column: 1 / -1; }
   .section-pad { padding: 64px 0; }
   .page-header { padding: calc(var(--header-h) + 40px) 0 50px; }
-  .section-gradient { padding-top: 100px; background: linear-gradient(to bottom, var(--primary-blue) 0%, var(--bg-light) 80px, var(--bg-light) 100%); }
 }
 
 @media (max-width: 560px) {
@@ -904,85 +909,6 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
     </div>
   </div>
   <div class="theme-light section-pad" style="border-top: 1px solid rgba(0,0,0,0.05);">
-    <div class="container">
-      <div class="sec-head sec-head--center reveal"><span class="badge badge--dark">Licensing</span><h2>Questions About Buying</h2></div>
-      <div class="faq reveal">
-        <details><summary>What's the difference between Basic and Pro?<span class="pm"></span></summary><div class="faq-a">Basic is a one-time license for up to 100 pages of drawings with no time limit — ideal for occasional projects. Pro removes the page cap entirely with unlimited generation, valid for 365 days from activation.</div></details>
-        <details><summary>Is this a subscription?<span class="pm"></span></summary><div class="faq-a">No. Basic and Pro are one-time purchases. Pro's 365-day validity is the active license window; there is no automatic recurring charge.</div></details>
-        <details><summary>Which versions of 3ds Max are supported?<span class="pm"></span></summary><div class="faq-a">AlphaButton supports Autodesk 3ds Max 2021 and newer, including 2026. The same license works across all supported versions.</div></details>
-        <details><summary>How do I get a refund?<span class="pm"></span></summary><div class="faq-a">We offer a 14-day money-back guarantee if the software does not perform as advertised. Email <a href="mailto:office@alphabutton.xyz">office@alphabutton.xyz</a> and read the full <a data-nav="refund" style="cursor:pointer;">Refund Policy</a>.</div></details>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="buy" class="page-section" data-title="Buy — AlphaButton">
-  <div class="page-header">
-    <div class="container">
-      <span class="badge reveal">Buy AlphaButton</span>
-      <h1 class="reveal d1">Choose Your License.</h1>
-      <p class="reveal d2">One-time licenses — no subscriptions. Backed by a 14-day money-back guarantee and secure checkout.</p>
-    </div>
-  </div>
-  <div class="theme-navy section-pad">
-    <div class="container">
-      <div class="price-grid reveal">
-        <article class="price-card">
-          <div class="price-card__name">Free License</div>
-          <div class="price-card__price"><span class="amt">$0</span></div>
-          <div class="price-card__sub">Try it on real production scenes.</div>
-          <ul>
-            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Full one-click generation</li>
-            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>ISO sheets A4 → A0</li>
-            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Dimensions &amp; BOM</li>
-            <li class="no"><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span>Watermarked output</li>
-          </ul>
-          <button class="btn btn-primary btn-block btn-lg"><span class="btn__label">Download Free</span></button>
-        </article>
-        <article class="price-card">
-          <div class="price-card__name">Basic</div>
-          <div class="price-card__price"><span class="amt">$10</span><span class="per">/ one-time</span></div>
-          <div class="price-card__sub">For freelancers &amp; small jobs.</div>
-          <ul>
-            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span><strong>100 pages</strong> of drawings</li>
-            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span><strong>No time limit</strong></li>
-            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>No watermark</li>
-            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Email support</li>
-          </ul>
-          <button class="btn btn-gold btn-block btn-lg"><span class="btn__label">Buy now</span></button>
-        </article>
-        <article class="price-card price-card--featured">
-          <span class="price-card__tag">Most popular</span>
-          <div class="price-card__name">Pro</div>
-          <div class="price-card__price"><span class="amt">$100</span><span class="per">/ one-time</span></div>
-          <div class="price-card__sub">For studios in constant production.</div>
-          <ul>
-            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span><strong>Unlimited generation</strong></li>
-            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Valid for <strong>365 days</strong></li>
-            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>No watermark</li>
-            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Priority support</li>
-          </ul>
-          <button class="btn btn-gold btn-block btn-lg"><span class="btn__label">Buy now</span></button>
-        </article>
-      </div>
-
-      <div class="trust reveal">
-        <div class="trust__item">
-          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
-          <div><h4>Secure checkout</h4><p>Payments &amp; invoicing handled by Paddle, our Merchant of Record.</p></div>
-        </div>
-        <div class="trust__item">
-          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 109-9"/><path d="M3 4v5h5"/><path d="M12 8v4l3 2"/></svg></span>
-          <div><h4>14-day guarantee</h4><p>Full refund if the software doesn't perform as advertised.</p></div>
-        </div>
-        <div class="trust__item">
-          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M5 21h14"/></svg></span>
-          <div><h4>Instant download</h4><p>Get your license key and installer by email, immediately.</p></div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="theme-light section-pad">
     <div class="container">
       <div class="sec-head sec-head--center reveal"><span class="badge badge--dark">Licensing</span><h2>Questions About Buying</h2></div>
       <div class="faq reveal">
