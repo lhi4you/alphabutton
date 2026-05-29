@@ -136,13 +136,13 @@ img { max-width: 100%; display: block; }
    ============================================================ */
 .site-header {
   position: fixed; inset: 0 0 auto 0; z-index: 1000;
-  padding: 14px clamp(12px, 2.5vw, 30px);
+  padding: 14px 0; /* Змінено відступи, щоб їх контролював .container */
   pointer-events: none;
   transition: all 0.3s ease;
 }
 .header-bar {
   pointer-events: auto;
-  max-width: 1320px; margin: 0 auto;
+  width: 100%; /* Розтягується на всю доступну ширину контейнера */
   min-height: 60px;
   background: rgba(36, 36, 36, 0.75); /* Відповідає новому #242424 */
   backdrop-filter: blur(24px) saturate(180%);
@@ -162,12 +162,19 @@ img { max-width: 100%; display: block; }
 /* brand */
 .brand { display: flex; align-items: center; gap: 11px; text-decoration: none; transition: opacity 0.3s ease; flex-shrink: 0; }
 .brand:hover { opacity: 0.8; }
+
 .brand .mark { 
   height: 34px; 
-  display: inline-block; 
+  display: inline-flex; 
   transition: background-color 0.4s ease;
 } 
-/* Експліцитно прописана маска лише для хедера (для підтримки Safari/iOS) */
+.brand .mark img { 
+  display: block;
+  height: 34px; 
+  width: auto; 
+} 
+
+/* Налаштування маски логотипу спеціально для хедера (з підтримкою Safari/iOS) */
 .header-bar .brand .mark {
   background-color: var(--text-gray); 
   -webkit-mask-image: url('Logo_1.8.webp');
@@ -179,14 +186,10 @@ img { max-width: 100%; display: block; }
   mask-repeat: no-repeat;
   mask-position: left center;
 }
-.brand .mark img { 
-  display: block;
-  height: 34px; 
-  width: auto; 
-} 
 .header-bar .brand .mark img {
-  opacity: 0.001; /* Зберігає розміри для контейнера маски, уникнення багів приховування */
+  opacity: 0.001; /* Важливо: 0.001 замість 0, щоб iOS Safari не ігнорував блок */
 }
+
 .brand .word { font-weight: 800; font-size: 18px; letter-spacing: .04em; display: none; } 
 .brand .word .dot { color: var(--state-ready); }
 
@@ -581,33 +584,35 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
 <div class="toast-container" id="toast-container" aria-live="polite" aria-atomic="true"></div>
 
 <header class="site-header">
-  <div class="header-bar">
-    <a class="brand" data-nav="home" tabindex="0" aria-label="AlphaButton home">
-      <span class="mark">
-        <img src="Logo_1.8.webp" alt="AlphaButton Logo">
-      </span>
-      <span class="word">ALPHABUTTON<span class="dot">.</span></span>
-    </a>
+  <div class="container">
+    <div class="header-bar">
+      <a class="brand" data-nav="home" tabindex="0" aria-label="AlphaButton home">
+        <span class="mark">
+          <img src="Logo_1.8.webp" alt="AlphaButton Logo">
+        </span>
+        <span class="word">ALPHABUTTON<span class="dot">.</span></span>
+      </a>
 
-    <nav class="nav" id="nav">
-      <div class="nav-item">
-        <button class="nav-link" data-group="product" data-dropdown aria-haspopup="true">
-          Product
-          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-        </button>
-        <div class="dropdown">
-          <button data-nav="product">Overview</button>
-          <button data-nav="workflow">Workflow</button>
-          <button data-nav="pricing">Pricing</button>
+      <nav class="nav" id="nav">
+        <div class="nav-item">
+          <button class="nav-link" data-group="product" data-dropdown aria-haspopup="true">
+            Product
+            <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="dropdown">
+            <button data-nav="product">Overview</button>
+            <button data-nav="workflow">Workflow</button>
+            <button data-nav="pricing">Pricing</button>
+          </div>
         </div>
-      </div>
-      <button class="nav-link" data-group="support" data-nav="support">Support</button>
-      <button class="nav-link" data-group="buy" data-nav="buy">Buy</button>
-    </nav>
+        <button class="nav-link" data-group="support" data-nav="support">Support</button>
+        <button class="nav-link" data-group="buy" data-nav="buy">Buy</button>
+      </nav>
 
-    <button class="menu-toggle" id="menu-toggle" aria-label="Menu" aria-expanded="false" aria-controls="nav">
-      <span></span><span></span>
-    </button>
+      <button class="menu-toggle" id="menu-toggle" aria-label="Menu" aria-expanded="false" aria-controls="nav">
+        <span></span><span></span>
+      </button>
+    </div>
   </div>
 </header>
 
@@ -668,7 +673,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
       <span class="compat__label">Built for Autodesk 3ds Max</span>
       <div class="compat__items">
         <span class="compat__chip">2026</span><span class="compat__chip">2025</span><span class="compat__chip">2024</span>
-        <span class="compat__chip">2023</span><span class="compat__chip">2022</span><span class="compat__chip">2021 →</span>
+        <span class="compat__chip">2023 ←</span>
       </div>
     </div>
   </div>
@@ -686,7 +691,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
             <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Saves hours of tedious manual drafting per project</li>
           </ul>
           <div style="margin-top:26px;">
-            <button class="btn btn-primary" data-nav="workflow"><span class="btn__label">See the workflow</span></button>
+            <button class="btn btn-primary btn-lg" data-nav="workflow"><span class="btn__label">See the workflow</span></button>
           </div>
         </div>
         <div class="row__media reveal d1">
@@ -807,7 +812,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
             <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Dynamic Bill of Materials with quantities &amp; materials</li>
             <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Auto-open PDF after creation — no extra steps</li>
           </ul>
-          <div style="margin-top:26px;"><button class="btn btn-primary" data-nav="pricing"><span class="btn__label">View Pricing</span></button></div>
+          <div style="margin-top:26px;"><button class="btn btn-primary btn-lg" data-nav="pricing"><span class="btn__label">View Pricing</span></button></div>
         </div>
         <div class="row__media">
           <div class="frame frame--light">
@@ -839,7 +844,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
             <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>ISO sheets A4 → A0</li>
             <li class="no"><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span>Watermarked output</li>
           </ul>
-          <button class="btn btn-light btn-block" data-nav="buy"><span class="btn__label">Download Free</span></button>
+          <button class="btn btn-primary btn-block btn-lg" data-nav="buy"><span class="btn__label">Download Free</span></button>
         </article>
         <article class="price-card">
           <div class="price-card__name">Basic</div>
@@ -851,7 +856,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
             <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>No watermark</li>
             <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Email support</li>
           </ul>
-          <button class="btn btn-light btn-block" data-nav="buy"><span class="btn__label">Buy now</span></button>
+          <button class="btn btn-gold btn-block btn-lg" data-nav="buy"><span class="btn__label">Buy now</span></button>
         </article>
         <article class="price-card price-card--featured">
           <span class="price-card__tag">Most popular</span>
@@ -864,7 +869,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
             <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>No watermark</li>
             <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Priority support</li>
           </ul>
-          <button class="btn btn-primary btn-block" data-nav="buy"><span class="btn__label">Buy now</span></button>
+          <button class="btn btn-gold btn-block btn-lg" data-nav="buy"><span class="btn__label">Buy now</span></button>
         </article>
       </div>
       <p class="reveal" style="text-align:center;margin-top:26px;font-size:14px;color:var(--text-muted);">Includes a <strong style="color:var(--primary-blue);">14-day money-back guarantee</strong>. See our <a data-nav="refund" style="color:var(--accent-hover);text-decoration:underline;text-underline-offset:2px;cursor:pointer;">Refund Policy</a>.</p>
@@ -891,7 +896,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
             <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Dimensions &amp; BOM</li>
             <li class="no"><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span>Watermarked output</li>
           </ul>
-          <button class="btn btn-light btn-block"><span class="btn__label">Download Free</span></button>
+          <button class="btn btn-primary btn-block btn-lg"><span class="btn__label">Download Free</span></button>
         </article>
         <article class="price-card">
           <div class="price-card__name">Basic</div>
@@ -903,7 +908,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
             <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>No watermark</li>
             <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Email support</li>
           </ul>
-          <button class="btn btn-light btn-block"><span class="btn__label">Buy now</span></button>
+          <button class="btn btn-gold btn-block btn-lg"><span class="btn__label">Buy now</span></button>
         </article>
         <article class="price-card price-card--featured">
           <span class="price-card__tag">Most popular</span>
@@ -916,7 +921,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
             <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>No watermark</li>
             <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Priority support</li>
           </ul>
-          <button class="btn btn-primary btn-block"><span class="btn__label">Buy now</span></button>
+          <button class="btn btn-gold btn-block btn-lg"><span class="btn__label">Buy now</span></button>
         </article>
       </div>
 
@@ -1158,8 +1163,11 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
 </footer>
 
 <div class="cookie" id="cookie" role="dialog" aria-label="Cookie consent">
-  <div class="cookie__txt"><b>We use cookies.</b> AlphaButton uses essential and analytics cookies to keep the site working and understand how it's used. See our <a data-nav="privacy">Privacy Policy</a>.</div>
-  <div class="cookie__actions"><button class="btn btn-light" data-cookie="reject"><span class="btn__label">Reject</span></button><button class="btn btn-primary" data-cookie="accept"><span class="btn__label">Accept</span></button></div>
+  <div class="cookie__txt"><b>We use cookies.</b> We use essential cookies to keep the site working. We and our Merchant of Record, Paddle, also use cookies to securely process payments and analyze site traffic. Read our <a data-nav="privacy">Privacy Policy</a>.</div>
+  <div class="cookie__actions">
+    <button class="btn btn-light" data-cookie="reject"><span class="btn__label">Reject All</span></button>
+    <button class="btn btn-primary" data-cookie="accept"><span class="btn__label">Accept All</span></button>
+  </div>
 </div>
 
 <button class="scroll-top" id="scroll-top" aria-label="Back to top">
