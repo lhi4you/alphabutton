@@ -8,10 +8,8 @@
 <meta name="theme-color" content="#0A192F">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 
-<!-- SECURITY: Basic Content Security Policy (allows inline scripts/styles for single-file structure but limits external execution) -->
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src 'self' data: https:;">
 
-<!-- PERFORMANCE: Optimized Font Loading -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -194,24 +192,15 @@ img { max-width: 100%; display: block; }
 }
 .dropdown button:hover, .dropdown button:focus { background: rgba(0,0,0,0.22); color: var(--accent-yellow); }
 
-.header-actions { display: flex; align-items: center; gap: 8px; }
-.icon-btn {
-  width: 40px; height: 40px; border-radius: 10px; background: var(--neu-surface);
-  box-shadow: var(--neu-out-sm); border: none; cursor: pointer;
-  display: grid; place-items: center; color: var(--neu-text); flex: none;
-  transition: all 0.3s ease;
-}
-.icon-btn:active { box-shadow: var(--neu-in); }
-.icon-btn svg { width: 19px; height: 19px; }
-.header-actions .btn { min-height: 44px; padding: 12px 22px; margin: 0; font-size: 13px; }
 .nav > .btn { display: none; }
 
 /* hamburger */
-.menu-toggle { display: none; width: 44px; height: 44px; border-radius: 10px; background: var(--neu-surface); box-shadow: var(--neu-out-sm); border: none; cursor: pointer; flex-direction: column; gap: 5px; align-items: center; justify-content: center; transition: all 0.3s ease; }
-.menu-toggle span { display: block; width: 22px; height: 2.5px; background: #fff; border-radius: 2px; transition: .3s; }
-.menu-toggle.active span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); background: var(--accent-yellow); }
-.menu-toggle.active span:nth-child(2) { opacity: 0; }
-.menu-toggle.active span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); background: var(--accent-yellow); }
+.menu-toggle { display: none; width: 44px; height: 44px; border-radius: 10px; background: var(--neu-surface); box-shadow: var(--neu-out-sm); border: none; cursor: pointer; position: relative; transition: all 0.3s ease; }
+.menu-toggle span { display: block; position: absolute; left: 11px; top: 21px; width: 22px; height: 2px; background: #fff; border-radius: 2px; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease; }
+.menu-toggle span:nth-child(1) { transform: translateY(-5px); }
+.menu-toggle span:nth-child(2) { transform: translateY(5px); }
+.menu-toggle.active span:nth-child(1) { transform: translateY(0) rotate(45deg); background: var(--accent-yellow); }
+.menu-toggle.active span:nth-child(2) { transform: translateY(0) rotate(-45deg); background: var(--accent-yellow); }
 
 /* --- LIGHT HEADER STATE (Triggered when scrolled over dark backgrounds) --- */
 .site-header.is-light .header-bar {
@@ -229,7 +218,7 @@ img { max-width: 100%; display: block; }
 .site-header.is-light .dropdown button:hover, .site-header.is-light .dropdown button:focus { background: rgba(0,0,0,0.04); color: var(--primary-blue); }
 .site-header.is-light .menu-toggle { background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05); color: var(--primary-blue); }
 .site-header.is-light .menu-toggle span { background: var(--primary-blue); }
-.site-header.is-light .menu-toggle.active span:nth-child(1), .site-header.is-light .menu-toggle.active span:nth-child(3) { background: var(--accent-hover); }
+.site-header.is-light .menu-toggle.active span { background: var(--accent-hover); }
 
 /* ============================================================
    SPA SECTIONS
@@ -312,13 +301,9 @@ main { flex-grow: 1; width: 100%; }
 .hero-split__convert { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); z-index: 3; width: 52px; height: 52px; border-radius: 50%; background: var(--state-ready); color: #fff; display: grid; place-items: center; box-shadow: 0 10px 26px -6px rgba(76,175,80,.7), 0 0 0 7px rgba(76,175,80,.16); }
 .hero-split__convert svg { width: 24px; height: 24px; }
 
-/* Виправлено анімацію Scroll (зроблено повільніше і плавніше) */
-.scroll-cue { position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%); color: var(--accent-yellow); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; animation: bounceDown 2.5s ease-in-out infinite; opacity: .85; }
-.scroll-cue svg { width: 20px; height: 20px; }
-@keyframes bounceDown { 
-  0%, 100% { transform: translateX(-50%) translateY(0); } 
-  50% { transform: translateX(-50%) translateY(10px); } 
-}
+.scroll-cue { position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%); color: var(--accent-yellow); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; opacity: .85; }
+.scroll-cue svg { width: 20px; height: 20px; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.scroll-cue:hover svg { transform: translateY(6px); }
 
 /* ============================================================
    CARDS / GRID
@@ -590,7 +575,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
     </nav>
 
     <button class="menu-toggle" id="menu-toggle" aria-label="Menu" aria-expanded="false" aria-controls="nav">
-      <span></span><span></span><span></span>
+      <span></span><span></span>
     </button>
   </div>
 </header>
@@ -602,7 +587,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
     <div class="hero__grid">
       <div class="hero__copy">
         <span class="badge reveal">3ds Max Plugin · 2D Drafting</span>
-        <h1 class="reveal d1">Automate Your 2D Drafting in <span class="accent">3ds&nbsp;Max.</span></h1>
+        <h1 class="reveal d1">STOP EXPORTING TO CAD. <span class="accent">3ds&nbsp;Max.</span></h1>
         <p class="hero__lead reveal d2">AlphaButton is the ultimate drawing generator for 3D artists and architects. Instantly convert complex 3D geometry into ISO-compliant 2D blueprints with automated dimensions and a smart Bill of Materials.</p>
         <div class="hero__cta reveal d3">
           <button class="btn btn-primary btn-lg" data-nav="buy"><span class="btn__label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M5 21h14"/></svg>Download Free</span></button>
@@ -625,12 +610,10 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
             <div class="hero-split__pair">
               <div class="hero-pane hero-pane--dark">
                 <div class="hero-split__cap"><span>3D Model</span><span>.max</span></div>
-                <!-- Initial view image, keep eager loading -->
                 <img src="assets/img/model-playground.png" alt="3D model in 3ds Max viewport">
               </div>
               <div class="hero-pane hero-pane--light">
                 <div class="hero-split__cap"><span>2D Drawing</span><span>.pdf</span></div>
-                <!-- Initial view image, keep eager loading -->
                 <img src="assets/img/blueprint.svg" alt="Generated ISO 2D blueprint">
               </div>
             </div>
@@ -677,7 +660,6 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
           <div class="frame">
             <div class="frame__bar"><span class="frame__dots"><i></i><i></i><i></i></span><span class="frame__title">Plugin Panel</span></div>
             <div class="frame__body" style="background:var(--neu-surface);display:grid;place-items:center;padding:22px;">
-              <!-- PERFORMANCE: Added loading="lazy" to images below the fold -->
               <img src="assets/img/plugin-full.png" alt="AlphaButton plugin panel in 3ds Max" loading="lazy" style="max-height:540px;width:auto;border-radius:4px;">
             </div>
           </div>
@@ -688,7 +670,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
 
   <div class="theme-navy section-pad" style="text-align:center;">
     <div class="container">
-      <h2 class="reveal" style="color:#fff;font-size:clamp(1.9rem,4vw,2.6rem);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;">Stop exporting to CAD.</h2>
+      <h2 class="reveal" style="color:#fff;font-size:clamp(1.9rem,4vw,2.6rem);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;">Stop drafting by hand.</h2>
       <p class="reveal d1" style="color:var(--text-gray);font-size:1.12rem;max-width:52ch;margin:0 auto 30px;line-height:1.7;">Install AlphaButton, select your geometry, and generate your first ISO-compliant sheet in under a minute.</p>
       <div class="reveal d2" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
         <button class="btn btn-primary btn-lg" data-nav="buy"><span class="btn__label">Download Free</span></button>
