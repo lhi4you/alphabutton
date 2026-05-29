@@ -8,19 +8,17 @@
 <meta name="theme-color" content="#242424">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 
-<!-- SECURITY: Basic Content Security Policy (allows inline scripts/styles for single-file structure but limits external execution) -->
+<!-- SECURITY: Basic Content Security Policy -->
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src 'self' data: https:;">
 
-<!-- PERFORMANCE: Optimized Font Loading (Replaced CSS @import) -->
+<!-- PERFORMANCE: Optimized Font Loading (Inter + Montserrat) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
 /* ============================================================
    AlphaButton — Drawing Generator  ·  single-page app
-   Design system ported from full_ref (navy / gold / Montserrat)
-   + neumorphic header & buttons (3ds Max plugin language)
    ============================================================ */
 
 :root {
@@ -44,23 +42,23 @@
   --neu-text-dim:      #9a9a9a;
 
   /* plugin button states */
-  --state-idle:       #E89A3C;  /* orange  */
-  --state-ready:      #4CAF50;  /* green   */
+  --state-idle:       #E89A3C;  
+  --state-ready:      #4CAF50;  
   --state-processing: #d1d1d1;
   --state-success:    #8fbc8f;
   --state-error:      #f07178;
 
-  /* neumorphic shadow stacks (light from top-left) */
+  /* neumorphic shadow stacks - Softened */
   --neu-out:
-     -2px -2px 4px rgba(255,255,255,0.12),
-     -5px -5px 11px rgba(255,255,255,0.06),
-      3px  3px 6px rgba(0,0,0,0.42),
-      7px  7px 16px rgba(0,0,0,0.26);
+     -2px -2px 4px rgba(255,255,255,0.08),
+     -5px -5px 11px rgba(255,255,255,0.04),
+      3px  3px 6px rgba(0,0,0,0.25),
+      7px  7px 16px rgba(0,0,0,0.15);
   --neu-out-sm:
-     -1px -1px 3px rgba(255,255,255,0.12),
-     -3px -3px 7px rgba(255,255,255,0.05),
-      2px  2px 5px rgba(0,0,0,0.45),
-      4px  4px 10px rgba(0,0,0,0.25);
+     -1px -1px 3px rgba(255,255,255,0.08),
+     -3px -3px 7px rgba(255,255,255,0.03),
+      2px  2px 5px rgba(0,0,0,0.25),
+      4px  4px 10px rgba(0,0,0,0.15);
   --neu-in:
      inset  2px  2px 4px rgba(0,0,0,0.58),
      inset  4px  4px 9px rgba(0,0,0,0.30),
@@ -71,16 +69,27 @@
   --header-h: 76px;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+/* Font Pairing: Inter for reading, Montserrat for UI/Headings */
 body {
+  font-family: 'Inter', sans-serif;
   background-color: var(--bg-light);
   color: var(--text-dark);
   display: flex; flex-direction: column; min-height: 100vh;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
+h1, h2, h3, h4, h5, h6, 
+.btn, .nav-link, .brand .word, .badge, .row__kicker, 
+.frame__title, .hero-split__cap, .scroll-cue, .num, 
+.compat__label, .compat__chip, .price-card__tag, 
+.price-card__name, .price-card__price .amt, .toc h4, 
+summary, .field label, .dropdown button, .skip-link, .toast b {
+  font-family: 'Montserrat', sans-serif;
+}
+
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 a { text-decoration: none; transition: .3s; color: inherit; }
 img { max-width: 100%; display: block; }
 ::selection { background: var(--accent-yellow); color: var(--primary-blue); }
@@ -104,7 +113,7 @@ img { max-width: 100%; display: block; }
   border: none; cursor: pointer;
   background: var(--neu-surface);
   color: var(--btn-color);
-  font-family: inherit; font-weight: 700; font-size: 14px;
+  font-weight: 700; font-size: 14px;
   letter-spacing: .4px; text-align: center; line-height: 1.1;
   border-radius: 12px;
   box-shadow: var(--neu-out);
@@ -113,13 +122,8 @@ img { max-width: 100%; display: block; }
 }
 .btn svg { width: 18px; height: 18px; flex: none; }
 .btn:hover { background: var(--neu-surface-hover); }
-.btn:active,
-.btn.is-pressed {
-  background: var(--neu-surface-2);
-  box-shadow: var(--neu-in);
-}
-.btn:active .btn__label,
-.btn.is-pressed .btn__label { transform: translate(1px, 1px); }
+.btn:active, .btn.is-pressed { background: var(--neu-surface-2); box-shadow: var(--neu-in); }
+.btn:active .btn__label, .btn.is-pressed .btn__label { transform: translate(1px, 1px); }
 .btn__label { display: inline-flex; align-items: center; gap: 10px; transition: transform .05s ease; }
 .btn:focus-visible { outline: 2px solid var(--btn-color); outline-offset: 3px; border-radius: 12px; }
 
@@ -151,22 +155,12 @@ img { max-width: 100%; display: block; }
   gap: 20px;
 }
 
-/* brand */
 .brand { display: flex; align-items: center; gap: 11px; text-decoration: none; transition: opacity 0.3s ease; flex-shrink: 0; }
 .brand:hover { opacity: 0.8; }
+.brand .mark { height: 34px; display: inline-flex; transition: background-color 0.4s ease; } 
+.brand .mark img { display: block; height: 34px; width: auto; } 
 
-.brand .mark { 
-  height: 34px; 
-  display: inline-flex; 
-  transition: background-color 0.4s ease;
-} 
-.brand .mark img { 
-  display: block;
-  height: 34px; 
-  width: auto; 
-} 
-
-/* Налаштування маски логотипу спеціально для хедера (з підтримкою Safari/iOS) */
+/* Маска логотипу */
 .header-bar .brand .mark {
   background-color: var(--text-gray); 
   -webkit-mask-image: url('AlphaButton_Logo.webp');
@@ -178,9 +172,7 @@ img { max-width: 100%; display: block; }
   mask-repeat: no-repeat;
   mask-position: left center;
 }
-.header-bar .brand .mark img {
-  opacity: 0.001; /* Важливо: 0.001 замість 0, щоб iOS Safari не ігнорував блок */
-}
+.header-bar .brand .mark img { opacity: 0.001; }
 
 .brand .word { font-weight: 800; font-size: 18px; letter-spacing: .04em; display: none; } 
 .brand .word .dot { color: var(--state-ready); }
@@ -192,7 +184,7 @@ img { max-width: 100%; display: block; }
   display: inline-flex; align-items: center; gap: 6px;
   font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px;
   color: var(--text-gray); padding: 12px 16px; border-radius: 9px; cursor: pointer;
-  background: none; border: none; font-family: inherit;
+  background: none; border: none;
   transition: color 0.3s ease;
 }
 .nav-link:hover, .nav-link.active-link { color: var(--accent-yellow); }
@@ -202,7 +194,7 @@ img { max-width: 100%; display: block; }
 /* dropdown */
 .dropdown {
   position: absolute; top: calc(100% + 10px); left: 0;
-  min-width: 230px; background: var(--neu-surface);
+  min-width: 200px; background: var(--neu-surface);
   border-radius: 12px; box-shadow: var(--neu-out); border: none;
   padding: 8px; opacity: 0; visibility: hidden; transform: translateY(10px);
   transition: all .28s cubic-bezier(.4,0,.2,1);
@@ -211,7 +203,7 @@ img { max-width: 100%; display: block; }
 .dropdown button {
   display: block; width: 100%; text-align: left;
   padding: 11px 16px; border-radius: 8px; border: none; background: none; cursor: pointer;
-  color: var(--neu-text); font-family: inherit; font-size: 13.5px; font-weight: 600;
+  color: var(--neu-text); font-size: 13.5px; font-weight: 600;
 }
 .dropdown button:hover, .dropdown button:focus { background: rgba(0,0,0,0.22); color: var(--accent-yellow); }
 
@@ -225,7 +217,7 @@ img { max-width: 100%; display: block; }
 .menu-toggle.active span:nth-child(1) { transform: translateY(0) rotate(45deg); background: var(--accent-yellow); }
 .menu-toggle.active span:nth-child(2) { transform: translateY(0) rotate(-45deg); background: var(--accent-yellow); }
 
-/* --- LIGHT HEADER STATE (Triggered when scrolled over dark backgrounds) --- */
+/* --- LIGHT HEADER STATE --- */
 .site-header.is-light {
   background: rgba(255, 255, 255, 0.9);
   border-bottom-color: rgba(0, 0, 0, 0.08);
@@ -255,6 +247,12 @@ main { flex-grow: 1; width: 100%; }
 .theme-light { background: var(--bg-light); }
 .theme-white { background: #fff; }
 .theme-navy  { background: var(--primary-blue); color: var(--text-light); }
+
+/* Gradient Transition */
+.section-gradient {
+  background: linear-gradient(to bottom, var(--primary-blue) 0%, var(--bg-light) 60px, var(--bg-light) 100%);
+  padding-top: 130px;
+}
 
 /* page header band */
 .page-header { background: var(--primary-blue); color: #fff; padding: calc(var(--header-h) + 56px) 5% 70px; text-align: center; }
@@ -309,7 +307,9 @@ main { flex-grow: 1; width: 100%; }
 .frame--light .frame__dots i { background: rgba(0,0,0,.16); }
 .frame__title { font-size: 12px; color: var(--neu-text-dim); letter-spacing: .03em; font-weight: 600; flex: 1; }
 .frame--light .frame__title { color: #888; }
-.frame__body { display: block; }
+.frame__body { display: block; overflow: hidden; }
+.frame__body img { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); transform-origin: center; }
+.frame:hover .frame__body img { transform: scale(1.03); }
 
 .hero-split__pair { display: grid; grid-template-columns: 1fr 1fr; }
 .hero-pane { padding: 16px; display: flex; flex-direction: column; }
@@ -319,7 +319,14 @@ main { flex-grow: 1; width: 100%; }
 .hero-split__cap { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; color: var(--neu-text-dim); margin-bottom: 10px; display: flex; justify-content: space-between; }
 .hero-pane--light .hero-split__cap { color: #999; }
 .hero-split { position: relative; }
-.hero-split__convert { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); z-index: 3; width: 52px; height: 52px; border-radius: 50%; background: var(--state-ready); color: #fff; display: grid; place-items: center; box-shadow: 0 10px 26px -6px rgba(76,175,80,.7), 0 0 0 7px rgba(76,175,80,.16); }
+
+/* Pulse animation for convert button */
+@keyframes pulse-convert {
+  0% { box-shadow: 0 10px 26px -6px rgba(76,175,80,.7), 0 0 0 0 rgba(76,175,80,.4); }
+  70% { box-shadow: 0 10px 26px -6px rgba(76,175,80,.7), 0 0 0 15px rgba(76,175,80,0); }
+  100% { box-shadow: 0 10px 26px -6px rgba(76,175,80,.7), 0 0 0 0 rgba(76,175,80,0); }
+}
+.hero-split__convert { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); z-index: 3; width: 52px; height: 52px; border-radius: 50%; background: var(--state-ready); color: #fff; display: grid; place-items: center; box-shadow: 0 10px 26px -6px rgba(76,175,80,.7); animation: pulse-convert 2s infinite; }
 .hero-split__convert svg { width: 24px; height: 24px; }
 
 .scroll-cue { position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%); color: var(--accent-yellow); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; opacity: .85; }
@@ -332,21 +339,21 @@ main { flex-grow: 1; width: 100%; }
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 28px; }
 .grid-3 { grid-template-columns: repeat(3, 1fr); }
 .card {
-  background: #fff; padding: 38px 32px; border-radius: 6px;
+  background: #fff; padding: 48px 40px; border-radius: 8px; /* Increased padding */
   box-shadow: 0 10px 30px rgba(0,0,0,.05); border-top: 4px solid var(--primary-blue);
   transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease;
   display: flex; flex-direction: column; gap: 14px;
 }
 .card:hover { transform: translateY(-8px); box-shadow: 0 22px 44px rgba(0,0,0,.1); border-color: var(--accent-yellow); }
 .card .num { font-size: 12px; font-weight: 800; letter-spacing: .12em; color: var(--accent-hover); }
-.card .ico { width: 50px; height: 50px; border-radius: 8px; display: grid; place-items: background: var(--primary-blue); color: var(--accent-yellow); }
+.card .ico { width: 50px; height: 50px; border-radius: 8px; display: grid; place-items: center; background: var(--primary-blue); color: var(--accent-yellow); }
 .card .ico svg { width: 26px; height: 26px; }
 .card h3 { color: var(--primary-blue); font-size: 1.35rem; font-weight: 700; line-height: 1.3; }
 .card p { color: var(--text-muted); line-height: 1.7; font-size: 15px; }
 
 /* checklist */
 .check-list { list-style: none; display: grid; gap: 13px; margin-top: 8px; }
-.check-list li { display: flex; gap: 12px; align-items: flex-start; font-size: 15.5px; line-height: 1.5; }
+.check-list li { display: flex; gap: 12px; align-items: flex-start; font-size: 15.5px; line-height: 1.6; }
 .check-list .ck { flex: none; width: 22px; height: 22px; border-radius: 50%; background: rgba(76,175,80,.14); color: var(--state-ready); display: grid; place-items: center; margin-top: 1px; }
 .check-list .ck svg { width: 13px; height: 13px; }
 .theme-navy .check-list li { color: var(--text-gray); }
@@ -377,16 +384,16 @@ main { flex-grow: 1; width: 100%; }
    PRICING
    ============================================================ */
 .price-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 26px; align-items: stretch; }
-.price-card { background: #fff; border-radius: 8px; box-shadow: 0 12px 34px rgba(0,0,0,.06); padding: 36px 30px; display: flex; flex-direction: column; position: relative; border-top: 4px solid var(--primary-blue); }
+.price-card { background: #fff; border-radius: 8px; box-shadow: 0 12px 34px rgba(0,0,0,.06); padding: 46px 36px; display: flex; flex-direction: column; position: relative; border-top: 4px solid var(--primary-blue); }
 .price-card--featured { border-top-color: var(--accent-yellow); box-shadow: 0 20px 50px rgba(36,36,36,.18); transform: translateY(-6px); }
-.price-card__tag { position: absolute; top: -13px; left: 30px; background: var(--accent-yellow); color: var(--primary-blue); font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; padding: 5px 13px; border-radius: 4px; }
+.price-card__tag { position: absolute; top: -13px; left: 36px; background: var(--accent-yellow); color: var(--primary-blue); font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; padding: 5px 13px; border-radius: 4px; }
 .price-card__name { font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--accent-hover); margin-bottom: 16px; }
 .price-card__price { display: flex; align-items: baseline; gap: 6px; margin-bottom: 6px; }
 .price-card__price .amt { font-size: 3.1rem; font-weight: 800; letter-spacing: -.02em; color: var(--primary-blue); line-height: 1; }
 .price-card__price .per { font-size: 13px; color: var(--text-muted); font-weight: 600; }
-.price-card__sub { font-size: 14px; color: var(--text-muted); margin-bottom: 26px; min-height: 20px; }
+.price-card__sub { font-size: 14px; color: var(--text-muted); margin-bottom: 26px; min-height: 20px; line-height: 1.5; }
 .price-card ul { list-style: none; display: grid; gap: 13px; margin-bottom: 30px; }
-.price-card li { display: flex; gap: 11px; align-items: flex-start; font-size: 15px; color: var(--text-dark); }
+.price-card li { display: flex; gap: 11px; align-items: flex-start; font-size: 15px; color: var(--text-dark); line-height: 1.5; }
 .price-card li .ck { flex: none; width: 20px; height: 20px; border-radius: 50%; background: rgba(76,175,80,.14); color: var(--state-ready); display: grid; place-items: center; margin-top: 1px; }
 .price-card li .ck svg { width: 12px; height: 12px; }
 .price-card li.no .ck { background: rgba(0,0,0,.05); color: #bbb; }
@@ -457,7 +464,7 @@ main { flex-grow: 1; width: 100%; }
 .prose li { margin-bottom: 8px; }
 .prose a { color: var(--accent-hover); text-decoration: underline; text-underline-offset: 2px; }
 .prose strong { color: var(--primary-blue); }
-.callout { border: 1px solid var(--accent-yellow); background: rgba(255,215,0,.1); border-radius: 8px; padding: 22px 24px; margin: 22px 0; color: var(--text-dark); }
+.callout { border: 1px solid var(--accent-yellow); background: rgba(255,215,0,.1); border-radius: 8px; padding: 22px 24px; margin: 22px 0; color: var(--text-dark); line-height: 1.6; }
 .callout b { color: var(--accent-hover); }
 
 /* ============================================================
@@ -542,6 +549,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
   .footer-brand { grid-column: 1 / -1; }
   .section-pad { padding: 64px 0; }
   .page-header { padding: calc(var(--header-h) + 40px) 5% 50px; }
+  .section-gradient { padding-top: 100px; background: linear-gradient(to bottom, var(--primary-blue) 0%, var(--bg-light) 40px, var(--bg-light) 100%); }
 }
 
 @media (max-width: 560px) {
@@ -562,6 +570,8 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
   .reveal { opacity: 1; transform: none; }
   html { scroll-behavior: auto; }
+  .hero-split__convert { animation: none; }
+  .frame:hover .frame__body img { transform: none; }
 }
 </style>
 </head>
@@ -589,11 +599,10 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
           <div class="dropdown">
             <button data-nav="product">Overview</button>
             <button data-nav="workflow">Workflow</button>
-            <button data-nav="pricing">Pricing</button>
           </div>
         </div>
+        <button class="nav-link" data-group="pricing" data-nav="pricing">Pricing</button>
         <button class="nav-link" data-group="support" data-nav="support">Support</button>
-        <button class="nav-link" data-group="buy" data-nav="buy">Buy</button>
       </nav>
 
       <button class="menu-toggle" id="menu-toggle" aria-label="Menu" aria-expanded="false" aria-controls="nav">
@@ -613,7 +622,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
         <h1 class="reveal d1">Automate Your 2D Drafting in <span class="accent">3ds&nbsp;Max.</span></h1>
         <p class="hero__lead reveal d2">AlphaButton is the ultimate drawing generator for 3D artists and architects. Instantly convert complex 3D geometry into ISO-compliant 2D blueprints with automated dimensions and a smart Bill of Materials.</p>
         <div class="hero__cta reveal d3">
-          <button class="btn btn-primary btn-lg" data-nav="buy"><span class="btn__label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M5 21h14"/></svg>Download Free</span></button>
+          <button class="btn btn-primary btn-lg" data-nav="pricing"><span class="btn__label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M5 21h14"/></svg>Download Free</span></button>
           <button class="btn btn-gold btn-lg" data-nav="pricing"><span class="btn__label">View Pricing</span></button>
         </div>
         <div class="hero__meta reveal d3">
@@ -663,7 +672,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
     </div>
   </div>
 
-  <div class="theme-light section-pad">
+  <div class="theme-light section-pad section-gradient">
     <div class="container">
       <div class="row">
         <div class="row__text reveal">
@@ -696,7 +705,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
       <h2 class="reveal" style="color:#fff;font-size:clamp(1.9rem,4vw,2.6rem);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;">Save time. Stop exporting to CAD.</h2>
       <p class="reveal d1" style="color:var(--text-gray);font-size:1.12rem;max-width:52ch;margin:0 auto 30px;line-height:1.7;">Install AlphaButton, select your geometry, and generate your first ISO-compliant sheet in under a minute.</p>
       <div class="reveal d2" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-        <button class="btn btn-primary btn-lg" data-nav="buy"><span class="btn__label">Download Free</span></button>
+        <button class="btn btn-primary btn-lg" data-nav="pricing"><span class="btn__label">Download Free</span></button>
         <button class="btn btn-gold btn-lg" data-nav="support"><span class="btn__label">Talk to Support</span></button>
       </div>
     </div>
@@ -829,7 +838,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
             <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>ISO sheets A4 → A0</li>
             <li class="no"><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span>Watermarked output</li>
           </ul>
-          <button class="btn btn-primary btn-block btn-lg" data-nav="buy"><span class="btn__label">Download Free</span></button>
+          <button class="btn btn-primary btn-block btn-lg" onclick="showToast('Download Started', 'Your free installer is downloading.', 'success')"><span class="btn__label">Download Free</span></button>
         </article>
         <article class="price-card">
           <div class="price-card__name">Basic</div>
@@ -841,7 +850,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
             <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>No watermark</li>
             <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Email support</li>
           </ul>
-          <button class="btn btn-gold btn-block btn-lg" data-nav="buy"><span class="btn__label">Buy now</span></button>
+          <button class="btn btn-gold btn-block btn-lg" onclick="showToast('Checkout', 'Redirecting to secure payment gateway...', 'success')"><span class="btn__label">Buy now</span></button>
         </article>
         <article class="price-card price-card--featured">
           <span class="price-card__tag">Most popular</span>
@@ -854,63 +863,11 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
             <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>No watermark</li>
             <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Priority support</li>
           </ul>
-          <button class="btn btn-gold btn-block btn-lg" data-nav="buy"><span class="btn__label">Buy now</span></button>
-        </article>
-      </div>
-      <p class="reveal" style="text-align:center;margin-top:26px;font-size:14px;color:var(--text-muted);">Includes a <strong style="color:var(--primary-blue);">14-day money-back guarantee</strong>. See our <a data-nav="refund" style="color:var(--accent-hover);text-decoration:underline;text-underline-offset:2px;cursor:pointer;">Refund Policy</a>.</p>
-    </div>
-  </div>
-</section>
-
-<section id="buy" class="page-section" data-title="Buy — AlphaButton">
-  <div class="page-header">
-    <span class="badge reveal">Buy AlphaButton</span>
-    <h1 class="reveal d1">Choose Your License.</h1>
-    <p class="reveal d2">One-time licenses — no subscriptions. Backed by a 14-day money-back guarantee and secure checkout.</p>
-  </div>
-  <div class="theme-navy section-pad">
-    <div class="container">
-      <div class="price-grid reveal">
-        <article class="price-card">
-          <div class="price-card__name">Free License</div>
-          <div class="price-card__price"><span class="amt">$0</span></div>
-          <div class="price-card__sub">Try it on real production scenes.</div>
-          <ul>
-            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Full one-click generation</li>
-            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>ISO sheets A4 → A0</li>
-            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Dimensions &amp; BOM</li>
-            <li class="no"><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span>Watermarked output</li>
-          </ul>
-          <button class="btn btn-primary btn-block btn-lg"><span class="btn__label">Download Free</span></button>
-        </article>
-        <article class="price-card">
-          <div class="price-card__name">Basic</div>
-          <div class="price-card__price"><span class="amt">$10</span><span class="per">/ one-time</span></div>
-          <div class="price-card__sub">For freelancers &amp; small jobs.</div>
-          <ul>
-            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span><strong>100 pages</strong> of drawings</li>
-            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span><strong>No time limit</strong></li>
-            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>No watermark</li>
-            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Email support</li>
-          </ul>
-          <button class="btn btn-gold btn-block btn-lg"><span class="btn__label">Buy now</span></button>
-        </article>
-        <article class="price-card price-card--featured">
-          <span class="price-card__tag">Most popular</span>
-          <div class="price-card__name">Pro</div>
-          <div class="price-card__price"><span class="amt">$100</span><span class="per">/ one-time</span></div>
-          <div class="price-card__sub">For studios in constant production.</div>
-          <ul>
-            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span><strong>Unlimited generation</strong></li>
-            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Valid for <strong>365 days</strong></li>
-            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>No watermark</li>
-            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Priority support</li>
-          </ul>
-          <button class="btn btn-gold btn-block btn-lg"><span class="btn__label">Buy now</span></button>
+          <button class="btn btn-gold btn-block btn-lg" onclick="showToast('Checkout', 'Redirecting to secure payment gateway...', 'success')"><span class="btn__label">Buy now</span></button>
         </article>
       </div>
 
-      <div class="trust reveal">
+      <div class="trust reveal" style="margin-top: 50px; margin-bottom: 30px;">
         <div class="trust__item">
           <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
           <div><h4>Secure checkout</h4><p>Payments &amp; invoicing handled by Paddle, our Merchant of Record.</p></div>
@@ -924,9 +881,11 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
           <div><h4>Instant download</h4><p>Get your license key and installer by email, immediately.</p></div>
         </div>
       </div>
+
+      <p class="reveal" style="text-align:center;font-size:14px;color:var(--text-muted);">Includes a <strong style="color:var(--primary-blue);">14-day money-back guarantee</strong>. See our <a data-nav="refund" style="color:var(--accent-hover);text-decoration:underline;text-underline-offset:2px;cursor:pointer;">Refund Policy</a>.</p>
     </div>
   </div>
-  <div class="theme-light section-pad">
+  <div class="theme-light section-pad" style="border-top: 1px solid rgba(0,0,0,0.05);">
     <div class="container">
       <div class="sec-head sec-head--center reveal"><span class="badge badge--dark">Licensing</span><h2>Questions About Buying</h2></div>
       <div class="faq reveal">
@@ -961,7 +920,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
         <article class="card reveal d2">
           <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="1.5"/><path d="M8 21h8M12 17v4"/></svg></div>
           <h3>System Requirements</h3>
-          <p>Autodesk 3ds Max 2021–2026 · Windows 10/11 · 8&nbsp;GB RAM minimum. A PDF reader for output.</p>
+          <p>Autodesk 3ds Max 2023–2026 · Windows 10/11 · 8&nbsp;GB RAM minimum. A PDF reader for output.</p>
         </article>
       </div>
     </div>
@@ -983,7 +942,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
           <form id="contact-form">
             <div class="field"><label for="cname">Name</label><input id="cname" type="text" placeholder="Your name" required></div>
             <div class="field"><label for="cemail">Email</label><input id="cemail" type="email" placeholder="you@studio.com" required></div>
-            <div class="field"><label for="cver">3ds Max version</label><select id="cver"><option>2026</option><option>2025</option><option>2024</option><option>2023</option><option>2022</option><option>2021</option></select></div>
+            <div class="field"><label for="cver">3ds Max version</label><select id="cver"><option>2026</option><option>2025</option><option>2024</option><option>2023</option></select></div>
             <div class="field"><label for="cmsg">Message</label><textarea id="cmsg" placeholder="Describe the scene, the sheet you need, and any errors…" required></textarea></div>
             <button class="btn btn-primary btn-block" type="submit"><span class="btn__label">Send Message</span></button>
           </form>
@@ -1026,7 +985,6 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
           <p class="updated">Last updated: 23 May 2026</p>
           <h2 id="t-acc">1. Acceptance of terms</h2>
           <p>These Terms of Use ("Terms") form a binding agreement between you and <strong>Yana Hrytsai (Sole Proprietor)</strong> ("AlphaButton", "we", "us"), operating from Ukraine. By downloading, installing or using the AlphaButton plugin (the "Software") or this website, you agree to these Terms.</p>
-          <p><em>This is a placeholder legal document provided for setup and moderation purposes. Have it reviewed by a qualified lawyer before publishing.</em></p>
           <h2 id="t-lic">2. License grant</h2>
           <p>Subject to your compliance with these Terms and payment of any applicable fees, we grant you a non-exclusive, non-transferable, revocable license to install and use the Software for your own commercial or personal projects, according to the tier you purchased:</p>
           <ul><li><strong>Free License</strong> — full functionality with watermarked output.</li><li><strong>Basic</strong> — up to 100 pages of generated drawings, with no time limit.</li><li><strong>Pro</strong> — unlimited generation, valid for 365 days from activation.</li></ul>
@@ -1069,7 +1027,6 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
           <div class="callout"><b>14-day money-back guarantee.</b> We offer a full refund within 14 days of purchase if the software does not perform as advertised. If AlphaButton doesn't do what we promise, you get your money back.</div>
           <h2 id="r-gua">1. Our guarantee</h2>
           <p>This Refund Policy applies to purchases of AlphaButton from <strong>Yana Hrytsai (Sole Proprietor)</strong>, operating from Ukraine. We stand behind the Software with a <strong>14-day money-back guarantee if the software does not perform as advertised</strong>. If, within 14 days of your purchase, AlphaButton fails to deliver the functionality described on this website, you are entitled to a full refund of the purchase price.</p>
-          <p><em>This is a placeholder legal document provided for setup and moderation purposes. Have it reviewed by a qualified lawyer before publishing.</em></p>
           <h2 id="r-eli">2. Eligibility</h2>
           <ul><li>Your refund request must be made within <strong>14 days</strong> of the original purchase date.</li><li>The request must relate to the Software not performing as advertised.</li><li>Please give us a reasonable opportunity to resolve the issue first via Support.</li></ul>
           <h2 id="r-how">3. How to request a refund</h2>
@@ -1107,7 +1064,6 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
           <p class="updated">Last updated: 23 May 2026</p>
           <h2 id="p-int">1. Overview</h2>
           <p>This Privacy Policy explains how <strong>Yana Hrytsai (Sole Proprietor)</strong> ("AlphaButton", "we", "us"), operating from Ukraine, collects and processes personal data when you visit this website or use the AlphaButton plugin.</p>
-          <p><em>This is a placeholder legal document provided for setup and moderation purposes. Have it reviewed by a qualified lawyer before publishing.</em></p>
           <h2 id="p-col">2. Data we collect</h2>
           <ul><li><strong>Purchase data</strong> — name, email and billing details, collected and processed by our Merchant of Record, Paddle. We do not store full payment card numbers.</li><li><strong>Support data</strong> — the contents of messages you send us, including your email and 3ds Max version.</li><li><strong>Usage data</strong> — anonymised analytics about how the website is used.</li></ul>
           <h2 id="p-use">3. How we use your data</h2>
@@ -1137,7 +1093,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
       </a>
       <p>The drawing generator for 3ds Max. Turn 3D geometry into ISO-compliant 2D documentation, automatically.</p>
     </div>
-    <div class="footer-col"><h4>Product</h4><ul><li><a data-nav="product">Overview</a></li><li><a data-nav="workflow">Workflow</a></li><li><a data-nav="pricing">Pricing</a></li><li><a data-nav="buy">Download</a></li></ul></div>
+    <div class="footer-col"><h4>Product</h4><ul><li><a data-nav="product">Overview</a></li><li><a data-nav="workflow">Workflow</a></li><li><a data-nav="pricing">Pricing</a></li></ul></div>
     <div class="footer-col"><h4>Company</h4><ul><li><a data-nav="support">Support</a></li><li><a data-nav="terms">Terms of Use</a></li><li><a data-nav="refund">Refund Policy</a></li><li><a data-nav="privacy">Privacy Policy</a></li></ul></div>
     <div class="footer-col"><h4>Details</h4><p class="footer-legal-co"><strong>Yana Hrytsai</strong> (Sole Proprietor)<br>[Street and House Number],<br>[City], [Zip Code], Ukraine<br><a href="mailto:office@alphabutton.xyz">office@alphabutton.xyz</a></p></div>
   </div>
@@ -1161,7 +1117,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
 
 <script>
 /* ============================================================
-   AlphaButton — single-page app behaviour (Modernized)
+   AlphaButton — single-page app behaviour
    ============================================================ */
 (function () {
   'use strict';
@@ -1169,9 +1125,9 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
   /* ---- which top-nav item is "active" for a given section ---- */
   const NAV_GROUP = {
     home: 'home',
-    product: 'product', workflow: 'product', pricing: 'product',
+    product: 'product', workflow: 'product', 
+    pricing: 'pricing',
     support: 'support',
-    buy: 'buy',
     terms: '', refund: '', privacy: ''
   };
 
@@ -1247,7 +1203,6 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
     t.innerHTML = '<span class="toast-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>' +
       '<div><b></b><span></span></div>';
     
-    // SECURITY Note: Using textContent correctly prevents XSS
     t.querySelector('b').textContent = title;
     t.querySelector('span:last-child').textContent = msg;
     c.appendChild(t);
@@ -1285,7 +1240,6 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
     
     window.addEventListener('scroll', updateHeaderTheme, { passive: true });
     window.addEventListener('resize', updateHeaderTheme, { passive: true });
-    // Execute on initial load with slight delay for accurate layout calculation
     setTimeout(updateHeaderTheme, 50);
 
     /* delegated clicks */
@@ -1321,7 +1275,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
       }, { passive: true });
     }
 
-    /* contact form (demo) */
+    /* contact form */
     const form = $('#contact-form');
     if (form) {
       form.addEventListener('submit', function (e) {
