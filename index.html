@@ -160,23 +160,33 @@ img { max-width: 100%; display: block; }
 }
 
 /* brand */
-.brand { display: flex; align-items: center; gap: 11px; text-decoration: none; transition: opacity 0.3s ease; }
+.brand { display: flex; align-items: center; gap: 11px; text-decoration: none; transition: opacity 0.3s ease; flex-shrink: 0; }
 .brand:hover { opacity: 0.8; }
 .brand .mark { 
   height: 34px; 
   display: inline-block; 
-  /* Колір маски відповідає кольору тексту праворуч (меню) */
-  background-color: var(--text-gray); 
-  -webkit-mask: url('Logo_1.8.webp') no-repeat left center / contain;
-  mask: url('Logo_1.8.webp') no-repeat left center / contain;
   transition: background-color 0.4s ease;
 } 
+/* Експліцитно прописана маска лише для хедера (для підтримки Safari/iOS) */
+.header-bar .brand .mark {
+  background-color: var(--text-gray); 
+  -webkit-mask-image: url('Logo_1.8.webp');
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: left center;
+  mask-image: url('Logo_1.8.webp');
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: left center;
+}
 .brand .mark img { 
   display: block;
   height: 34px; 
   width: auto; 
-  opacity: 0; /* Зберігає точні пропорції для контейнера маски */
 } 
+.header-bar .brand .mark img {
+  opacity: 0.001; /* Зберігає розміри для контейнера маски, уникнення багів приховування */
+}
 .brand .word { font-weight: 800; font-size: 18px; letter-spacing: .04em; display: none; } 
 .brand .word .dot { color: var(--state-ready); }
 
@@ -231,7 +241,7 @@ img { max-width: 100%; display: block; }
               0 2px 10px rgba(0, 0, 0, 0.04),
               inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
-.site-header.is-light .brand .mark { background-color: var(--text-muted); }
+.site-header.is-light .header-bar .brand .mark { background-color: var(--text-muted); }
 .site-header.is-light .nav-link { color: var(--text-muted); }
 .site-header.is-light .nav-link:hover, .site-header.is-light .nav-link.active-link { color: var(--primary-blue); }
 .site-header.is-light .dropdown { background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.05); }
