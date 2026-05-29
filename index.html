@@ -234,14 +234,26 @@ img { max-width: 100%; display: block; }
 .site-header.is-light .menu-toggle.active span { background: var(--accent-hover); }
 
 /* ============================================================
-   SPA SECTIONS
+   SPA SECTIONS & UNIFIED CONTAINER WIDTHS
    ============================================================ */
 main { flex-grow: 1; width: 100%; }
 .page-section { display: none; animation: fadeIn .55s cubic-bezier(.16,1,.3,1); }
 .page-section.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
 
-.container { max-width: var(--maxw); margin: 0 auto; padding: 0 5%; }
+/* Гармонізація габаритів: Всі блоки контенту використовують єдиний падінг
+  clamp(20px, 5vw, 40px), гарантуючи ідеально рівні краї на будь-якому екрані.
+*/
+.container,
+.hero__grid,
+.footer-grid,
+.footer-bottom { 
+  width: 100%; 
+  max-width: var(--maxw); 
+  margin: 0 auto; 
+  padding: 0 clamp(20px, 5vw, 40px); 
+}
+
 .section-pad { padding: 90px 0; }
 .section-pad-sm { padding: 60px 0; }
 .theme-light { background: var(--bg-light); }
@@ -250,12 +262,12 @@ main { flex-grow: 1; width: 100%; }
 
 /* Gradient Transition */
 .section-gradient {
-  background: linear-gradient(to bottom, var(--primary-blue) 0%, var(--bg-light) 60px, var(--bg-light) 100%);
+  background: linear-gradient(to bottom, var(--primary-blue) 0%, var(--bg-light) 110px, var(--bg-light) 100%);
   padding-top: 130px;
 }
 
 /* page header band */
-.page-header { background: var(--primary-blue); color: #fff; padding: calc(var(--header-h) + 56px) 5% 70px; text-align: center; }
+.page-header { background: var(--primary-blue); color: #fff; padding: calc(var(--header-h) + 56px) 0 70px; text-align: center; }
 .page-header h1 { color: var(--accent-yellow); font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 14px; }
 .page-header p { font-size: 1.15rem; color: var(--text-gray); max-width: 620px; margin: 0 auto; line-height: 1.6; }
 
@@ -281,13 +293,13 @@ main { flex-grow: 1; width: 100%; }
    ============================================================ */
 .hero {
   position: relative; min-height: 100vh; display: flex; align-items: center;
-  padding: calc(var(--header-h) + 40px) 5% 70px;
+  padding: calc(var(--header-h) + 40px) 0 70px;
   background:
     linear-gradient(115deg, rgba(36,36,36,.97) 0%, rgba(36,36,36,.82) 46%, rgba(36,36,36,.45) 100%),
     var(--primary-blue);
   color: #fff; overflow: hidden;
 }
-.hero__grid { width: 100%; max-width: var(--maxw); margin: 0 auto; display: grid; grid-template-columns: 1.05fr 1fr; gap: clamp(32px,5vw,64px); align-items: center; }
+.hero__grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: clamp(32px,5vw,64px); align-items: center; }
 .hero__copy { max-width: 620px; }
 .hero h1 { font-size: clamp(2.4rem, 5.4vw, 4rem); font-weight: 800; line-height: 1.04; letter-spacing: .5px; text-transform: uppercase; margin-bottom: 22px; }
 .hero h1 .accent { color: var(--accent-yellow); }
@@ -470,8 +482,8 @@ main { flex-grow: 1; width: 100%; }
 /* ============================================================
    FOOTER
    ============================================================ */
-footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px 5% 30px; border-top: 5px solid var(--accent-yellow); }
-.footer-grid { max-width: var(--maxw); margin: 0 auto; display: grid; grid-template-columns: 1.6fr 1fr 1fr 1.4fr; gap: 40px; }
+footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px 0 30px; border-top: 5px solid var(--accent-yellow); }
+.footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1.4fr; gap: 40px; }
 .footer-brand .brand { margin-bottom: 18px; }
 .footer-brand p { max-width: 34ch; line-height: 1.65; font-size: 14.5px; }
 .footer-col h4 { color: #fff; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 18px; font-weight: 700; }
@@ -481,7 +493,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
 .footer-legal-co { line-height: 1.7; font-size: 14px; }
 .footer-legal-co strong { color: #fff; }
 .footer-legal-co a { color: var(--accent-yellow); }
-.footer-bottom { max-width: var(--maxw); margin: 48px auto 0; padding-top: 26px; border-top: 1px solid rgba(255,255,255,.06); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 12.5px; color: rgba(224,224,224,.6); }
+.footer-bottom { margin-top: 48px; padding-top: 26px; border-top: 1px solid rgba(255,255,255,.06); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 12.5px; color: rgba(224,224,224,.6); }
 
 /* ============================================================
    COOKIE BANNER + SCROLL TOP + TOASTS
@@ -519,9 +531,9 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
    RESPONSIVE
    ============================================================ */
 @media (max-width: 992px) {
-  :root { --header-h: 68px; }
+  :root { --header-h: 80px; }
   .menu-toggle { display: flex; }
-  .nav { position: fixed; top: calc(var(--header-h) + 8px); left: 14px; right: 14px; flex-direction: column; align-items: stretch; gap: 2px; background: rgba(36, 36, 36, 0.98); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); padding: 10px; max-height: calc(100vh - var(--header-h) - 30px); overflow-y: auto; transform: translateY(-12px); opacity: 0; visibility: hidden; transition: all .3s ease; }
+  .nav { position: fixed; top: calc(var(--header-h) + 6px); left: 14px; right: 14px; flex-direction: column; align-items: stretch; gap: 2px; background: rgba(36, 36, 36, 0.98); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); padding: 10px; max-height: calc(100vh - var(--header-h) - 30px); overflow-y: auto; transform: translateY(-12px); opacity: 0; visibility: hidden; transition: all .3s ease; }
   .site-header.is-light .nav { background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
   .nav.open { transform: none; opacity: 1; visibility: visible; }
   .nav-link { width: 100%; justify-content: space-between; padding: 14px 16px; }
@@ -531,7 +543,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
   .nav .btn { width: 100%; margin: 6px 0 2px; }
   .nav > .btn { display: inline-flex; }
 
-  .hero { min-height: auto; padding: calc(var(--header-h) + 50px) 5% 70px; }
+  .hero { min-height: auto; padding: calc(var(--header-h) + 50px) 0 70px; }
   .hero__grid { grid-template-columns: 1fr; gap: 44px; }
   .hero__lead { max-width: 48ch; }
   .scroll-cue { display: none; }
@@ -548,8 +560,8 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
   .footer-grid { grid-template-columns: 1fr 1fr; }
   .footer-brand { grid-column: 1 / -1; }
   .section-pad { padding: 64px 0; }
-  .page-header { padding: calc(var(--header-h) + 40px) 5% 50px; }
-  .section-gradient { padding-top: 100px; background: linear-gradient(to bottom, var(--primary-blue) 0%, var(--bg-light) 40px, var(--bg-light) 100%); }
+  .page-header { padding: calc(var(--header-h) + 40px) 0 50px; }
+  .section-gradient { padding-top: 100px; background: linear-gradient(to bottom, var(--primary-blue) 0%, var(--bg-light) 80px, var(--bg-light) 100%); }
 }
 
 @media (max-width: 560px) {
@@ -714,9 +726,11 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
 
 <section id="product" class="page-section" data-title="Product — AlphaButton">
   <div class="page-header">
-    <span class="badge reveal">Overview</span>
-    <h1 class="reveal d1">Key Features</h1>
-    <p class="reveal d2">Everything you need to turn 3D geometry into documentation, built into one dockable panel.</p>
+    <div class="container">
+      <span class="badge reveal">Overview</span>
+      <h1 class="reveal d1">Key Features</h1>
+      <p class="reveal d2">Everything you need to turn 3D geometry into documentation, built into one dockable panel.</p>
+    </div>
   </div>
   <div class="theme-light section-pad">
     <div class="container">
@@ -749,9 +763,11 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
 
 <section id="workflow" class="page-section" data-title="Workflow — AlphaButton">
   <div class="page-header">
-    <span class="badge reveal">The Workflow</span>
-    <h1 class="reveal d1">Configure Once.<br>Generate Forever.</h1>
-    <p class="reveal d2">Three steps from a busy 3ds Max scene to a clean, dimensioned PDF sheet.</p>
+    <div class="container">
+      <span class="badge reveal">The Workflow</span>
+      <h1 class="reveal d1">Configure Once.<br>Generate Forever.</h1>
+      <p class="reveal d2">Three steps from a busy 3ds Max scene to a clean, dimensioned PDF sheet.</p>
+    </div>
   </div>
   <div class="theme-light section-pad">
     <div class="container">
@@ -822,9 +838,11 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
 
 <section id="pricing" class="page-section" data-title="Pricing — AlphaButton">
   <div class="page-header">
-    <span class="badge reveal">Pricing</span>
-    <h1 class="reveal d1">Start Free.<br>Upgrade When You Ship.</h1>
-    <p class="reveal d2">One plugin, three licenses. No subscriptions — buy once and draft away.</p>
+    <div class="container">
+      <span class="badge reveal">Pricing</span>
+      <h1 class="reveal d1">Start Free.<br>Upgrade When You Ship.</h1>
+      <p class="reveal d2">One plugin, three licenses. No subscriptions — buy once and draft away.</p>
+    </div>
   </div>
   <div class="theme-light section-pad">
     <div class="container">
@@ -898,11 +916,92 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
   </div>
 </section>
 
+<section id="buy" class="page-section" data-title="Buy — AlphaButton">
+  <div class="page-header">
+    <div class="container">
+      <span class="badge reveal">Buy AlphaButton</span>
+      <h1 class="reveal d1">Choose Your License.</h1>
+      <p class="reveal d2">One-time licenses — no subscriptions. Backed by a 14-day money-back guarantee and secure checkout.</p>
+    </div>
+  </div>
+  <div class="theme-navy section-pad">
+    <div class="container">
+      <div class="price-grid reveal">
+        <article class="price-card">
+          <div class="price-card__name">Free License</div>
+          <div class="price-card__price"><span class="amt">$0</span></div>
+          <div class="price-card__sub">Try it on real production scenes.</div>
+          <ul>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Full one-click generation</li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>ISO sheets A4 → A0</li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Dimensions &amp; BOM</li>
+            <li class="no"><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span>Watermarked output</li>
+          </ul>
+          <button class="btn btn-primary btn-block btn-lg"><span class="btn__label">Download Free</span></button>
+        </article>
+        <article class="price-card">
+          <div class="price-card__name">Basic</div>
+          <div class="price-card__price"><span class="amt">$10</span><span class="per">/ one-time</span></div>
+          <div class="price-card__sub">For freelancers &amp; small jobs.</div>
+          <ul>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span><strong>100 pages</strong> of drawings</li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span><strong>No time limit</strong></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>No watermark</li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Email support</li>
+          </ul>
+          <button class="btn btn-gold btn-block btn-lg"><span class="btn__label">Buy now</span></button>
+        </article>
+        <article class="price-card price-card--featured">
+          <span class="price-card__tag">Most popular</span>
+          <div class="price-card__name">Pro</div>
+          <div class="price-card__price"><span class="amt">$100</span><span class="per">/ one-time</span></div>
+          <div class="price-card__sub">For studios in constant production.</div>
+          <ul>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span><strong>Unlimited generation</strong></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Valid for <strong>365 days</strong></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>No watermark</li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>Priority support</li>
+          </ul>
+          <button class="btn btn-gold btn-block btn-lg"><span class="btn__label">Buy now</span></button>
+        </article>
+      </div>
+
+      <div class="trust reveal">
+        <div class="trust__item">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+          <div><h4>Secure checkout</h4><p>Payments &amp; invoicing handled by Paddle, our Merchant of Record.</p></div>
+        </div>
+        <div class="trust__item">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 109-9"/><path d="M3 4v5h5"/><path d="M12 8v4l3 2"/></svg></span>
+          <div><h4>14-day guarantee</h4><p>Full refund if the software doesn't perform as advertised.</p></div>
+        </div>
+        <div class="trust__item">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M5 21h14"/></svg></span>
+          <div><h4>Instant download</h4><p>Get your license key and installer by email, immediately.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="theme-light section-pad">
+    <div class="container">
+      <div class="sec-head sec-head--center reveal"><span class="badge badge--dark">Licensing</span><h2>Questions About Buying</h2></div>
+      <div class="faq reveal">
+        <details><summary>What's the difference between Basic and Pro?<span class="pm"></span></summary><div class="faq-a">Basic is a one-time license for up to 100 pages of drawings with no time limit — ideal for occasional projects. Pro removes the page cap entirely with unlimited generation, valid for 365 days from activation.</div></details>
+        <details><summary>Is this a subscription?<span class="pm"></span></summary><div class="faq-a">No. Basic and Pro are one-time purchases. Pro's 365-day validity is the active license window; there is no automatic recurring charge.</div></details>
+        <details><summary>Which versions of 3ds Max are supported?<span class="pm"></span></summary><div class="faq-a">AlphaButton supports Autodesk 3ds Max 2021 and newer, including 2026. The same license works across all supported versions.</div></details>
+        <details><summary>How do I get a refund?<span class="pm"></span></summary><div class="faq-a">We offer a 14-day money-back guarantee if the software does not perform as advertised. Email <a href="mailto:office@alphabutton.xyz">office@alphabutton.xyz</a> and read the full <a data-nav="refund" style="cursor:pointer;">Refund Policy</a>.</div></details>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="support" class="page-section" data-title="Support — AlphaButton">
   <div class="page-header">
-    <span class="badge reveal">Support</span>
-    <h1 class="reveal d1">We're Here to Help.</h1>
-    <p class="reveal d2">Documentation, system requirements and direct support — usually answered within one business day.</p>
+    <div class="container">
+      <span class="badge reveal">Support</span>
+      <h1 class="reveal d1">We're Here to Help.</h1>
+      <p class="reveal d2">Documentation, system requirements and direct support — usually answered within one business day.</p>
+    </div>
   </div>
   <div class="theme-light section-pad">
     <div class="container">
@@ -964,7 +1063,11 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
 </section>
 
 <section id="terms" class="page-section" data-title="Terms of Use — AlphaButton">
-  <div class="page-header"><span class="badge">Legal</span><h1>Terms of Use</h1><p>The terms governing your use of the AlphaButton plugin and this website.</p></div>
+  <div class="page-header">
+    <div class="container">
+      <span class="badge">Legal</span><h1>Terms of Use</h1><p>The terms governing your use of the AlphaButton plugin and this website.</p>
+    </div>
+  </div>
   <div class="theme-light section-pad">
     <div class="container">
       <div class="prose-wrap">
@@ -985,6 +1088,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
           <p class="updated">Last updated: 23 May 2026</p>
           <h2 id="t-acc">1. Acceptance of terms</h2>
           <p>These Terms of Use ("Terms") form a binding agreement between you and <strong>Yana Hrytsai (Sole Proprietor)</strong> ("AlphaButton", "we", "us"), operating from Ukraine. By downloading, installing or using the AlphaButton plugin (the "Software") or this website, you agree to these Terms.</p>
+          <p><em>This is a placeholder legal document provided for setup and moderation purposes. Have it reviewed by a qualified lawyer before publishing.</em></p>
           <h2 id="t-lic">2. License grant</h2>
           <p>Subject to your compliance with these Terms and payment of any applicable fees, we grant you a non-exclusive, non-transferable, revocable license to install and use the Software for your own commercial or personal projects, according to the tier you purchased:</p>
           <ul><li><strong>Free License</strong> — full functionality with watermarked output.</li><li><strong>Basic</strong> — up to 100 pages of generated drawings, with no time limit.</li><li><strong>Pro</strong> — unlimited generation, valid for 365 days from activation.</li></ul>
@@ -1007,7 +1111,11 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
 </section>
 
 <section id="refund" class="page-section" data-title="Refund Policy — AlphaButton">
-  <div class="page-header"><span class="badge">Legal</span><h1>Refund Policy</h1><p>A 14-day money-back guarantee, and how to request a refund.</p></div>
+  <div class="page-header">
+    <div class="container">
+      <span class="badge">Legal</span><h1>Refund Policy</h1><p>A 14-day money-back guarantee, and how to request a refund.</p>
+    </div>
+  </div>
   <div class="theme-light section-pad">
     <div class="container">
       <div class="prose-wrap">
@@ -1027,6 +1135,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
           <div class="callout"><b>14-day money-back guarantee.</b> We offer a full refund within 14 days of purchase if the software does not perform as advertised. If AlphaButton doesn't do what we promise, you get your money back.</div>
           <h2 id="r-gua">1. Our guarantee</h2>
           <p>This Refund Policy applies to purchases of AlphaButton from <strong>Yana Hrytsai (Sole Proprietor)</strong>, operating from Ukraine. We stand behind the Software with a <strong>14-day money-back guarantee if the software does not perform as advertised</strong>. If, within 14 days of your purchase, AlphaButton fails to deliver the functionality described on this website, you are entitled to a full refund of the purchase price.</p>
+          <p><em>This is a placeholder legal document provided for setup and moderation purposes. Have it reviewed by a qualified lawyer before publishing.</em></p>
           <h2 id="r-eli">2. Eligibility</h2>
           <ul><li>Your refund request must be made within <strong>14 days</strong> of the original purchase date.</li><li>The request must relate to the Software not performing as advertised.</li><li>Please give us a reasonable opportunity to resolve the issue first via Support.</li></ul>
           <h2 id="r-how">3. How to request a refund</h2>
@@ -1044,7 +1153,11 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
 </section>
 
 <section id="privacy" class="page-section" data-title="Privacy Policy — AlphaButton">
-  <div class="page-header"><span class="badge">Legal</span><h1>Privacy Policy</h1><p>What data we collect, why, and the choices you have.</p></div>
+  <div class="page-header">
+    <div class="container">
+      <span class="badge">Legal</span><h1>Privacy Policy</h1><p>What data we collect, why, and the choices you have.</p>
+    </div>
+  </div>
   <div class="theme-light section-pad">
     <div class="container">
       <div class="prose-wrap">
@@ -1064,6 +1177,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
           <p class="updated">Last updated: 23 May 2026</p>
           <h2 id="p-int">1. Overview</h2>
           <p>This Privacy Policy explains how <strong>Yana Hrytsai (Sole Proprietor)</strong> ("AlphaButton", "we", "us"), operating from Ukraine, collects and processes personal data when you visit this website or use the AlphaButton plugin.</p>
+          <p><em>This is a placeholder legal document provided for setup and moderation purposes. Have it reviewed by a qualified lawyer before publishing.</em></p>
           <h2 id="p-col">2. Data we collect</h2>
           <ul><li><strong>Purchase data</strong> — name, email and billing details, collected and processed by our Merchant of Record, Paddle. We do not store full payment card numbers.</li><li><strong>Support data</strong> — the contents of messages you send us, including your email and 3ds Max version.</li><li><strong>Usage data</strong> — anonymised analytics about how the website is used.</li></ul>
           <h2 id="p-use">3. How we use your data</h2>
@@ -1093,7 +1207,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
       </a>
       <p>The drawing generator for 3ds Max. Turn 3D geometry into ISO-compliant 2D documentation, automatically.</p>
     </div>
-    <div class="footer-col"><h4>Product</h4><ul><li><a data-nav="product">Overview</a></li><li><a data-nav="workflow">Workflow</a></li><li><a data-nav="pricing">Pricing</a></li></ul></div>
+    <div class="footer-col"><h4>Product</h4><ul><li><a data-nav="product">Overview</a></li><li><a data-nav="workflow">Workflow</a></li><li><a data-nav="pricing">Pricing</a></li><li><a data-nav="buy">Download</a></li></ul></div>
     <div class="footer-col"><h4>Company</h4><ul><li><a data-nav="support">Support</a></li><li><a data-nav="terms">Terms of Use</a></li><li><a data-nav="refund">Refund Policy</a></li><li><a data-nav="privacy">Privacy Policy</a></li></ul></div>
     <div class="footer-col"><h4>Details</h4><p class="footer-legal-co"><strong>Yana Hrytsai</strong> (Sole Proprietor)<br>[Street and House Number],<br>[City], [Zip Code], Ukraine<br><a href="mailto:office@alphabutton.xyz">office@alphabutton.xyz</a></p></div>
   </div>
@@ -1117,7 +1231,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
 
 <script>
 /* ============================================================
-   AlphaButton — single-page app behaviour
+   AlphaButton — single-page app behaviour (Modernized)
    ============================================================ */
 (function () {
   'use strict';
@@ -1125,9 +1239,9 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
   /* ---- which top-nav item is "active" for a given section ---- */
   const NAV_GROUP = {
     home: 'home',
-    product: 'product', workflow: 'product', 
-    pricing: 'pricing',
+    product: 'product', workflow: 'product', pricing: 'product',
     support: 'support',
+    buy: 'buy',
     terms: '', refund: '', privacy: ''
   };
 
@@ -1203,6 +1317,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
     t.innerHTML = '<span class="toast-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>' +
       '<div><b></b><span></span></div>';
     
+    // SECURITY Note: Using textContent correctly prevents XSS
     t.querySelector('b').textContent = title;
     t.querySelector('span:last-child').textContent = msg;
     c.appendChild(t);
@@ -1220,6 +1335,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
       const headerRect = header.getBoundingClientRect();
       const checkY = headerRect.top + (headerRect.height / 2);
       
+      // Відкотили перевірку: секція .theme-light знову сприймається як світлий фон
       const darkSections = document.querySelectorAll('.theme-navy, .hero, .page-header, footer');
       
       let overDark = false;
@@ -1240,6 +1356,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
     
     window.addEventListener('scroll', updateHeaderTheme, { passive: true });
     window.addEventListener('resize', updateHeaderTheme, { passive: true });
+    // Execute on initial load with slight delay for accurate layout calculation
     setTimeout(updateHeaderTheme, 50);
 
     /* delegated clicks */
@@ -1275,7 +1392,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
       }, { passive: true });
     }
 
-    /* contact form */
+    /* contact form (demo) */
     const form = $('#contact-form');
     if (form) {
       form.addEventListener('submit', function (e) {
