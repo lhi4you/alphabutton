@@ -31,7 +31,7 @@
   --accent-yellow:  #FFD700;
   --accent-hover:   #e6c200;
   --text-light:     #FFFFFF;
-  --text-gray:      #CCD6F6;
+  --text-gray:      #E0E0E0; /* Ахроматичний світло-сірий замість синюватого #CCD6F6 */
   --text-dark:      #1a1a1a;
   --text-muted:     #555;
   --bg-light:       #F8F9FA;
@@ -474,7 +474,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
 .footer-legal-co { line-height: 1.7; font-size: 14px; }
 .footer-legal-co strong { color: #fff; }
 .footer-legal-co a { color: var(--accent-yellow); }
-.footer-bottom { max-width: var(--maxw); margin: 48px auto 0; padding-top: 26px; border-top: 1px solid rgba(255,255,255,.06); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 12.5px; color: rgba(204,214,246,.6); }
+.footer-bottom { max-width: var(--maxw); margin: 48px auto 0; padding-top: 26px; border-top: 1px solid rgba(255,255,255,.06); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 12.5px; color: rgba(224,224,224,.6); }
 
 /* ============================================================
    COOKIE BANNER + SCROLL TOP + TOASTS
@@ -514,7 +514,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
 @media (max-width: 992px) {
   :root { --header-h: 80px; }
   .menu-toggle { display: flex; }
-  .nav { position: fixed; top: calc(var(--header-h) + 6px); left: 14px; right: 14px; flex-direction: column; align-items: stretch; gap: 2px; background: rgba(10, 25, 47, 0.98); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); padding: 10px; max-height: calc(100vh - var(--header-h) - 30px); overflow-y: auto; transform: translateY(-12px); opacity: 0; visibility: hidden; transition: all .3s ease; }
+  .nav { position: fixed; top: calc(var(--header-h) + 6px); left: 14px; right: 14px; flex-direction: column; align-items: stretch; gap: 2px; background: rgba(36, 36, 36, 0.98); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); padding: 10px; max-height: calc(100vh - var(--header-h) - 30px); overflow-y: auto; transform: translateY(-12px); opacity: 0; visibility: hidden; transition: all .3s ease; }
   .site-header.is-light .nav { background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
   .nav.open { transform: none; opacity: 1; visibility: visible; }
   .nav-link { width: 100%; justify-content: space-between; padding: 14px 16px; }
