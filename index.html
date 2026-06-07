@@ -223,6 +223,18 @@ main { flex-grow: 1; width: 100%; }
 .page-section.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
 
+/* Спеціальні стилі для сторінки-заглушки (Splash) */
+body.is-splash .site-header { display: none; }
+body.is-splash footer { display: none; }
+#splash { 
+  min-height: 100vh; 
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: var(--primary-blue); color: #fff; text-align: center;
+}
+#splash .mark img { height: 60px; filter: brightness(0) invert(1); margin: 0 auto 20px; opacity: 0.9; }
+#splash h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; letter-spacing: 2px; margin-bottom: 10px; }
+#splash p { color: var(--text-gray); font-size: 1.1rem; }
+
 /* Гармонізація габаритів */
 .container,
 .hero__grid,
@@ -649,7 +661,17 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
 
 <main id="main">
 
-<section id="home" class="page-section active" data-title="AlphaButton — Drawing Generator for 3ds Max">
+<!-- Секція заглушки (Відображається першою, якщо немає хеша) -->
+<section id="splash" class="page-section active" data-title="AlphaButton — Coming Soon">
+  <div class="container reveal visible">
+    <div class="mark"><img src="AlphaButton_Logo.webp" alt="AlphaButton Logo"></div>
+    <h1>ALPHABUTTON.</h1>
+    <p>The ultimate drawing generator for 3ds Max.<br>Site is currently under construction.</p>
+  </div>
+</section>
+
+<!-- Забрали клас 'active' у секції home -->
+<section id="home" class="page-section" data-title="AlphaButton — Drawing Generator for 3ds Max">
   <div class="hero">
     <div class="hero__grid">
       <div class="hero__copy">
@@ -883,7 +905,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
         </article>
         <article class="price-card">
           <div class="price-card__name">Basic</div>
-          <div class="price-card__price"><span class="amt">$10</span><span class="per">/ one-time</span></div>
+          <div class="price-card__price"><span class="amt">$~</span><span class="per">/ one-time</span></div>
           <div class="price-card__sub">For freelancers &amp; small jobs.</div>
           <ul>
             <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span><strong>100 pages</strong> of drawings</li>
@@ -896,7 +918,7 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
         <article class="price-card price-card--featured">
           <span class="price-card__tag">Most popular</span>
           <div class="price-card__name">Pro</div>
-          <div class="price-card__price"><span class="amt">$100</span><span class="per">/ one-time</span></div>
+          <div class="price-card__price"><span class="amt">$~</span><span class="per">/ one-time</span></div>
           <div class="price-card__sub">For studios in constant production.</div>
           <ul>
             <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span><strong>Unlimited generation</strong></li>
@@ -1213,6 +1235,13 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
     $all('.page-section').forEach(function (s) { s.classList.remove('active'); });
     target.classList.add('active');
 
+    // Логіка приховування хедера/футера для заглушки
+    if (id === 'splash') {
+      document.body.classList.add('is-splash');
+    } else {
+      document.body.classList.remove('is-splash');
+    }
+
     // active nav highlight
     const group = NAV_GROUP[id] || '';
     $all('.nav-link[data-group]').forEach(function (l) {
@@ -1358,7 +1387,8 @@ footer { background: var(--primary-blue); color: var(--text-gray); padding: 64px
     if (initial && document.getElementById(initial)) {
       window.navigate(initial, { noScroll: true });
     } else {
-      revealInit(document.querySelector('.page-section.active'));
+      // Якщо хеша немає (просто домен) - показуємо заглушку
+      window.navigate('splash', { noScroll: true });
     }
   });
 })();
